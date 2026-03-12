@@ -1,0 +1,124 @@
+/* src/index.css */
+
+/* ── Imports must come first ──────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ── Base Reset ───────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f6f9;
+}
+
+/* ── Transitions (buttons and links only) ─────────────────────────────── */
+button, a, [role="button"] {
+  transition-property: color, background-color, border-color, opacity;
+  transition-duration: 150ms;
+  transition-timing-function: ease-in-out;
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1a1;
+}
+
+/* ── Input Fixes ──────────────────────────────────────────────────────── */
+
+/* Remove browser built-in icons that overlap custom icons */
+input::-ms-reveal,
+input::-ms-clear,
+input::-webkit-contacts-auto-fill-button,
+input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Fix autofill background color */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Make all inputs taller and more comfortable */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"] {
+  min-height: 48px;
+  font-size: 15px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* ── Form Card Fix ────────────────────────────────────────────────────── */
+
+/* Ensure card content never overflows its container */
+.bg-white.rounded-2xl {
+  overflow: visible;
+}
+
+/* ── Button Height Fix ────────────────────────────────────────────────── */
+button {
+  min-height: 44px;
+}
+
+/* ── Spacing Fix ──────────────────────────────────────────────────────── */
+/* Add breathing room between form elements */
+.space-y-4 > * + * {
+  margin-top: 20px !important;
+}
+
+/* ── Dashboard Layout ─────────────────────────────────────────────────── */
+
+/* Desktop — sidebar always visible, push main content right */
+@media (min-width: 768px) {
+  .sidebar-panel {
+    transform: translateX(0) !important;
+  }
+
+  .main-content {
+    margin-left: 260px;
+  }
+
+  .hamburger-btn {
+    display: none !important;
+  }
+
+  .mobile-close-btn {
+    display: none !important;
+  }
+}
+
+/* Mobile — sidebar hidden by default, hamburger visible */
+@media (max-width: 767px) {
+  .main-content {
+    margin-left: 0;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}

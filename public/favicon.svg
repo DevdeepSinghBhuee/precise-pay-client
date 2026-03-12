@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36">
+  <!-- Blue rounded square background -->
+  <rect width="36" height="36" rx="8" fill="#2563eb"/>
+  <!-- TrendingUp icon path — matches lucide exactly -->
+  <polyline
+    points="3,25 10,17 15,21 22,12 29,17"
+    fill="none"
+    stroke="white"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <polyline
+    points="24,12 29,12 29,17"
+    fill="none"
+    stroke="white"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
