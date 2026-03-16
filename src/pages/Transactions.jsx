@@ -1,10 +1,13 @@
 // src/pages/Transactions.jsx
-import { useState, useCallback } from 'react'
+ 
+import { useState, useCallback, useEffect } from 'react'
 import {
   Plus, Search, Filter,
   ChevronLeft, ChevronRight, X,
 } from 'lucide-react'
 import useTransactions from '../hooks/useTransactions'
+ 
+import { useLocation } from 'react-router-dom'
 import Modal from '../components/common/Modal'
 import Button from '../components/common/Button'
 import Spinner from '../components/common/Spinner'
@@ -31,6 +34,17 @@ const Transactions = () => {
     fetchTransactions, createTransaction,
     updateTransaction, deleteTransaction,
   } = useTransactions()
+
+  const location = useLocation()
+
+ // Auto-open modal if navigated here with openModal state
+ useEffect(() => {
+  if (location.state?.openModal) {
+    setModalOpen(true)
+    // Clear the state so refreshing doesn't reopen the modal
+    window.history.replaceState({}, '')
+  }
+ }, [location.state])
 
   // ── Apply Filters ──────────────────────────────────────────────────────
   const applyFilters = useCallback((page = 1) => {

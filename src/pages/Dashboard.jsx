@@ -11,7 +11,8 @@ import {
   ArrowUpRight, ArrowDownRight, Plus,
   ArrowLeftRight,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
+ 
+import { Link, useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import useTransactions from '../hooks/useTransactions'
 import { formatCurrency, formatDate } from '../utils/formatters'
@@ -170,7 +171,8 @@ const getGreeting = () => {
 
 // ── Main Dashboard ─────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const { user }                   = useAuth()
+  const { user }  = useAuth()
+  const navigate  = useNavigate()
   const { transactions, summary,
           loading, summaryLoading } = useTransactions()
 
@@ -234,7 +236,7 @@ const Dashboard = () => {
         color: 'white', display: 'flex',
         alignItems: 'center', justifyContent: 'space-between',
         flexWrap: 'wrap', gap: '16px',
-      }}>
+       }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '700', margin: 0 }}>
             Good {getGreeting()}, {user?.fullName?.split(' ')[0]}! 👋
@@ -243,21 +245,22 @@ const Dashboard = () => {
             Here's your financial overview for today.
           </p>
         </div>
-        <Link
-          to="/transactions"
+        <button
+           
+          onClick={() => navigate('/transactions', { state: { openModal: true } })}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(255,255,255,0.2)',
             border: '1px solid rgba(255,255,255,0.3)',
             borderRadius: '10px', padding: '10px 16px',
-            color: 'white', textDecoration: 'none',
+            color: 'white', cursor: 'pointer',
             fontSize: '14px', fontWeight: '600',
             backdropFilter: 'blur(4px)',
           }}
         >
-          <Plus size={16} />
+         <Plus size={16} />
           Add Transaction
-        </Link>
+         </button>
       </div>
 
       {/* ── Summary Cards ──────────────────────────────────────────────── */}
