@@ -1,13 +1,12 @@
 // src/pages/Transactions.jsx
- 
 import { useState, useCallback, useEffect } from 'react'
 import {
-  Plus, Search, Filter,
+  Plus, Search, Filter, Trash2, Pencil,
   ChevronLeft, ChevronRight, X,
+  Calendar,
 } from 'lucide-react'
-import useTransactions from '../hooks/useTransactions'
- 
 import { useLocation } from 'react-router-dom'
+import useTransactions from '../hooks/useTransactions'
 import Modal from '../components/common/Modal'
 import Button from '../components/common/Button'
 import Spinner from '../components/common/Spinner'
@@ -17,17 +16,55 @@ import TransactionList from '../components/transactions/TransactionList'
 import { formatCurrency } from '../utils/formatters'
 import toast from 'react-hot-toast'
 
+// ── Date Preset Helpers ────────────────────────────────────────────────────
+const getDatePreset = (preset) => {
+  const now   = new Date()
+  const year  = now.getFullYear()
+  const month = now.getMonth()
+
+  switch (preset) {
+    case 'this_month':
+      return {
+        startDate: new Date(year, month, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month + 1, 0).toISOString().split('T')[0],
+      }
+    case 'last_month':
+      return {
+        startDate: new Date(year, month - 1, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month, 0).toISOString().split('T')[0],
+      }
+    case 'last_3_months':
+      return {
+        startDate: new Date(year, month - 2, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month + 1, 0).toISOString().split('T')[0],
+      }
+    case 'this_year':
+      return {
+        startDate: new Date(year, 0, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, 11, 31).toISOString().split('T')[0],
+      }
+    default:
+      return { startDate: '', endDate: '' }
+  }
+}
+
 // ── Main Transactions Page ─────────────────────────────────────────────────
 const Transactions = () => {
-  const [modalOpen, setModalOpen]         = useState(false)
-  const [editingTx, setEditingTx]         = useState(null)
-  const [deletingId, setDeletingId]       = useState(null)
-  const [isSubmitting, setIsSubmitting]   = useState(false)
-  const [isDeleting, setIsDeleting]       = useState(false)
-  const [deleteConfirm, setDeleteConfirm] = useState(null)
-  const [searchTerm, setSearchTerm]       = useState('')
-  const [filterType, setFilterType]       = useState('')
-  const [currentPage, setCurrentPage]     = useState(1)
+  const [modalOpen, setModalOpen]           = useState(false)
+  const [editingTx, setEditingTx]           = useState(null)
+  const [deletingId, setDeletingId]         = useState(null)
+  const [isSubmitting, setIsSubmitting]     = useState(false)
+  const [isDeleting, setIsDeleting]         = useState(false)
+  const [deleteConfirm, setDeleteConfirm]   = useState(null)
+  const [searchTerm, setSearchTerm]         = useState('')
+  const [filterType, setFilterType]         = useState('')
+  const [currentPage, setCurrentPage]       = useState(1)
+  const [datePreset, setDatePreset]         = useState('')
+  const [startDate, setStartDate]           = useState('')
+  const [endDate, setEndDate]               = useState('')
+  const [showCustomDate, setShowCustomDate] = useState(false)
+
+  const location = useLocation()
 
   const {
     transactions, pagination, loading,
@@ -35,24 +72,70 @@ const Transactions = () => {
     updateTransaction, deleteTransaction,
   } = useTransactions()
 
-  const location = useLocation()
+  // ── Auto-open modal if navigated from Dashboard ────────────────────────
+  useEffect(() => {
+    if (location.state?.openModal) {
+      setModalOpen(true)
+      window.history.replaceState({}, '')
+    }
+  }, [location.state])
 
- // Auto-open modal if navigated here with openModal state
- useEffect(() => {
-  if (location.state?.openModal) {
-    setModalOpen(true)
-    // Clear the state so refreshing doesn't reopen the modal
-    window.history.replaceState({}, '')
-  }
- }, [location.state])
+  // ── Build params from all active filters ──────────────────────────────
+  const buildParams = useCallback((page = 1) => {
+    const params = { page, limit: 10 }
+    if (filterType) params.type      = filterType
+    if (startDate)  params.startDate = startDate
+    if (endDate)    params.endDate   = endDate
+    return params
+  }, [filterType, startDate, endDate])
 
   // ── Apply Filters ──────────────────────────────────────────────────────
   const applyFilters = useCallback((page = 1) => {
-    const params = { page, limit: 10 }
-    if (filterType) params.type = filterType
     setCurrentPage(page)
+    fetchTransactions(buildParams(page))
+  }, [buildParams, fetchTransactions])
+
+  // ── Handle Date Preset ─────────────────────────────────────────────────
+  const handlePreset = (preset) => {
+    setDatePreset(preset)
+    if (preset === 'custom') {
+      setShowCustomDate(true)
+      return
+    }
+    setShowCustomDate(false)
+    const { startDate: sd, endDate: ed } = getDatePreset(preset)
+    setStartDate(sd)
+    setEndDate(ed)
+    setCurrentPage(1)
+    const params = { page: 1, limit: 10 }
+    if (filterType) params.type = filterType
+    if (sd) params.startDate = sd
+    if (ed) params.endDate   = ed
     fetchTransactions(params)
-  }, [filterType, fetchTransactions])
+  }
+
+  // ── Handle Custom Date Apply ───────────────────────────────────────────
+  const handleCustomDateApply = () => {
+    if (!startDate && !endDate) return
+    setCurrentPage(1)
+    fetchTransactions(buildParams(1))
+    setShowCustomDate(false)
+  }
+
+  // ── Clear All Filters ──────────────────────────────────────────────────
+  const clearAllFilters = () => {
+    setFilterType('')
+    setSearchTerm('')
+    setDatePreset('')
+    setStartDate('')
+    setEndDate('')
+    setShowCustomDate(false)
+    setCurrentPage(1)
+    fetchTransactions({ page: 1, limit: 10 })
+  }
+
+  const hasActiveFilters = filterType || searchTerm ||
+                           startDate  || endDate
 
   // ── Handle Create / Update ─────────────────────────────────────────────
   const handleSubmit = async (data) => {
@@ -90,13 +173,11 @@ const Transactions = () => {
     }
   }
 
-  // ── Open Edit Modal ────────────────────────────────────────────────────
   const handleEdit = (transaction) => {
     setEditingTx(transaction)
     setModalOpen(true)
   }
 
-  // ── Close Modal ────────────────────────────────────────────────────────
   const handleCloseModal = () => {
     setModalOpen(false)
     setEditingTx(null)
@@ -144,89 +225,213 @@ const Transactions = () => {
       <div style={{
         background: '#ffffff', borderRadius: '14px',
         padding: '16px 20px', border: '1px solid #f3f4f6',
-        display: 'flex', gap: '12px', flexWrap: 'wrap',
-        alignItems: 'center',
+        display: 'flex', flexDirection: 'column', gap: '12px',
       }}>
 
-        {/* Search */}
-        <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
-          <Search size={16} style={{
-            position: 'absolute', left: '12px',
-            top: '50%', transform: 'translateY(-50%)',
-            color: '#9ca3af', pointerEvents: 'none',
-          }} />
-          <input
-            type="text"
-            placeholder="Search by description or category..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            style={{
-              width: '100%', paddingLeft: '38px',
-              paddingRight: '14px', paddingTop: '10px',
-              paddingBottom: '10px',
-              border: '1px solid #e5e7eb', borderRadius: '8px',
-              fontSize: '14px', outline: 'none', color: '#111827',
-              boxSizing: 'border-box',
-            }}
-          />
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm('')}
+        {/* Row 1 — Search + Type Filter + Clear */}
+        <div style={{
+          display: 'flex', gap: '12px',
+          flexWrap: 'wrap', alignItems: 'center',
+        }}>
+
+          {/* Search */}
+          <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
+            <Search size={16} style={{
+              position: 'absolute', left: '12px',
+              top: '50%', transform: 'translateY(-50%)',
+              color: '#9ca3af', pointerEvents: 'none',
+            }} />
+            <input
+              type="text"
+              placeholder="Search by description or category..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
-                position: 'absolute', right: '10px',
-                top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none',
-                cursor: 'pointer', color: '#9ca3af',
+                width: '100%', paddingLeft: '38px',
+                paddingRight: '14px', paddingTop: '10px',
+                paddingBottom: '10px',
+                border: '1px solid #e5e7eb', borderRadius: '8px',
+                fontSize: '14px', outline: 'none', color: '#111827',
+                boxSizing: 'border-box',
+              }}
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                style={{
+                  position: 'absolute', right: '10px',
+                  top: '50%', transform: 'translateY(-50%)',
+                  background: 'none', border: 'none',
+                  cursor: 'pointer', color: '#9ca3af',
+                }}
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Type Filter */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Filter size={16} color="#9ca3af" />
+            <select
+              value={filterType}
+              onChange={(e) => {
+                setFilterType(e.target.value)
+                setCurrentPage(1)
+                const params = { page: 1, limit: 10 }
+                if (e.target.value) params.type = e.target.value
+                if (startDate) params.startDate = startDate
+                if (endDate)   params.endDate   = endDate
+                fetchTransactions(params)
+              }}
+              style={{
+                padding: '10px 14px', border: '1px solid #e5e7eb',
+                borderRadius: '8px', fontSize: '14px',
+                outline: 'none', color: '#111827',
+                background: '#ffffff', cursor: 'pointer',
               }}
             >
-              <X size={14} />
+              <option value="">All Types</option>
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+          </div>
+
+          {/* Clear All */}
+          {hasActiveFilters && (
+            <button
+              onClick={clearAllFilters}
+              style={{
+                background: 'none', border: '1px solid #e5e7eb',
+                borderRadius: '8px', padding: '10px 14px',
+                fontSize: '13px', color: '#6b7280',
+                cursor: 'pointer', display: 'flex',
+                alignItems: 'center', gap: '6px',
+              }}
+            >
+              <X size={14} /> Clear All
             </button>
           )}
         </div>
 
-        {/* Type Filter */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={16} color="#9ca3af" />
-          <select
-            value={filterType}
-            onChange={(e) => {
-              setFilterType(e.target.value)
-              const params = { page: 1, limit: 10 }
-              if (e.target.value) params.type = e.target.value
-              setCurrentPage(1)
-              fetchTransactions(params)
-            }}
-            style={{
-              padding: '10px 14px', border: '1px solid #e5e7eb',
-              borderRadius: '8px', fontSize: '14px',
-              outline: 'none', color: '#111827',
-              background: '#ffffff', cursor: 'pointer',
-            }}
-          >
-            <option value="">All Types</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
+        {/* Row 2 — Date Presets */}
+        <div style={{
+          display: 'flex', gap: '8px',
+          flexWrap: 'wrap', alignItems: 'center',
+        }}>
+          <Calendar size={16} color="#9ca3af" style={{ flexShrink: 0 }} />
+
+          {[
+            { value: 'this_month',   label: 'This Month' },
+            { value: 'last_month',   label: 'Last Month' },
+            { value: 'last_3_months',label: 'Last 3 Months' },
+            { value: 'this_year',    label: 'This Year' },
+            { value: 'custom',       label: 'Custom Range' },
+          ].map((preset) => (
+            <button
+              key={preset.value}
+              onClick={() => handlePreset(preset.value)}
+              style={{
+                padding: '6px 14px',
+                borderRadius: '999px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                border: '1px solid',
+                borderColor: datePreset === preset.value
+                  ? '#2563eb' : '#e5e7eb',
+                background: datePreset === preset.value
+                  ? '#eff6ff' : '#ffffff',
+                color: datePreset === preset.value
+                  ? '#2563eb' : '#6b7280',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              {preset.label}
+            </button>
+          ))}
+
+          {/* Active date range display */}
+          {(startDate && endDate && datePreset !== 'custom') && (
+            <span style={{
+              fontSize: '12px', color: '#9ca3af', marginLeft: '4px',
+            }}>
+              {startDate} → {endDate}
+            </span>
+          )}
         </div>
 
-        {/* Clear Filters */}
-        {(filterType || searchTerm) && (
-          <button
-            onClick={() => {
-              setFilterType('')
-              setSearchTerm('')
-              fetchTransactions({ page: 1, limit: 10 })
-            }}
-            style={{
-              background: 'none', border: '1px solid #e5e7eb',
-              borderRadius: '8px', padding: '10px 14px',
-              fontSize: '13px', color: '#6b7280',
-              cursor: 'pointer', display: 'flex',
-              alignItems: 'center', gap: '6px',
-            }}
-          >
-            <X size={14} /> Clear
-          </button>
+        {/* Row 3 — Custom Date Range (shown only when custom is selected) */}
+        {showCustomDate && (
+          <div style={{
+            display: 'flex', gap: '12px',
+            alignItems: 'center', flexWrap: 'wrap',
+            padding: '12px 16px',
+            background: '#f9fafb',
+            borderRadius: '10px',
+            border: '1px solid #e5e7eb',
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              gap: '8px',
+            }}>
+              <label style={{
+                fontSize: '13px', fontWeight: '500', color: '#374151',
+              }}>
+                From
+              </label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                style={{
+                  padding: '8px 12px', border: '1px solid #d1d5db',
+                  borderRadius: '8px', fontSize: '13px',
+                  outline: 'none', color: '#111827',
+                }}
+              />
+            </div>
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+            }}>
+              <label style={{
+                fontSize: '13px', fontWeight: '500', color: '#374151',
+              }}>
+                To
+              </label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                style={{
+                  padding: '8px 12px', border: '1px solid #d1d5db',
+                  borderRadius: '8px', fontSize: '13px',
+                  outline: 'none', color: '#111827',
+                }}
+              />
+            </div>
+            <Button
+              size="sm"
+              onClick={handleCustomDateApply}
+              disabled={!startDate && !endDate}
+            >
+              Apply
+            </Button>
+            <button
+              onClick={() => {
+                setShowCustomDate(false)
+                setDatePreset('')
+                setStartDate('')
+                setEndDate('')
+              }}
+              style={{
+                background: 'none', border: 'none',
+                cursor: 'pointer', color: '#9ca3af',
+              }}
+            >
+              <X size={16} />
+            </button>
+          </div>
         )}
       </div>
 
@@ -234,7 +439,7 @@ const Transactions = () => {
       <TransactionList
         transactions={filteredTransactions}
         loading={loading}
-        hasFilters={!!(searchTerm || filterType)}
+        hasFilters={!!hasActiveFilters}
         onEdit={handleEdit}
         onDelete={setDeleteConfirm}
       />
@@ -299,7 +504,8 @@ const Transactions = () => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <p style={{
-            fontSize: '14px', color: '#4b5563', lineHeight: '1.6', margin: 0,
+            fontSize: '14px', color: '#4b5563',
+            lineHeight: '1.6', margin: 0,
           }}>
             Are you sure you want to delete{' '}
             <strong>"{deleteConfirm?.description}"</strong>?
