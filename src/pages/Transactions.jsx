@@ -3,7 +3,7 @@ import { useState, useCallback, useEffect } from 'react'
 import {
   Plus, Search, Filter, Trash2, Pencil,
   ChevronLeft, ChevronRight, X,
-  Calendar,
+  Calendar, SlidersHorizontal,
 } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import useTransactions from '../hooks/useTransactions'
@@ -12,8 +12,6 @@ import Button from '../components/common/Button'
 import Spinner from '../components/common/Spinner'
 import TransactionForm from '../components/transactions/TransactionForm'
 import TransactionList from '../components/transactions/TransactionList'
-// eslint-disable-next-line no-unused-vars
-import { formatCurrency } from '../utils/formatters'
 import toast from 'react-hot-toast'
 
 // ── Date Preset Helpers ────────────────────────────────────────────────────
@@ -56,13 +54,18 @@ const Transactions = () => {
   const [isSubmitting, setIsSubmitting]     = useState(false)
   const [isDeleting, setIsDeleting]         = useState(false)
   const [deleteConfirm, setDeleteConfirm]   = useState(null)
+  const [currentPage, setCurrentPage]       = useState(1)
+
+  // ── Filter States ──────────────────────────────────────────────────────
   const [searchTerm, setSearchTerm]         = useState('')
   const [filterType, setFilterType]         = useState('')
-  const [currentPage, setCurrentPage]       = useState(1)
   const [datePreset, setDatePreset]         = useState('')
   const [startDate, setStartDate]           = useState('')
   const [endDate, setEndDate]               = useState('')
   const [showCustomDate, setShowCustomDate] = useState(false)
+  const [minAmount, setMinAmount]           = useState('')
+  const [maxAmount, setMaxAmount]           = useState('')
+  const [showAdvanced, setShowAdvanced]     = useState(false)
 
   const location = useLocation()
 
@@ -72,7 +75,7 @@ const Transactions = () => {
     updateTransaction, deleteTransaction,
   } = useTransactions()
 
-  // ── Auto-open modal if navigated from Dashboard ────────────────────────
+  // ── Auto-open modal ────────────────────────────────────────────────────
   useEffect(() => {
     if (location.state?.openModal) {
       setModalOpen(true)
@@ -86,8 +89,10 @@ const Transactions = () => {
     if (filterType) params.type      = filterType
     if (startDate)  params.startDate = startDate
     if (endDate)    params.endDate   = endDate
+    if (minAmount)  params.minAmount = minAmount
+    if (maxAmount)  params.maxAmount = maxAmount
     return params
-  }, [filterType, startDate, endDate])
+  }, [filterType, startDate, endDate, minAmount, maxAmount])
 
   // ── Apply Filters ──────────────────────────────────────────────────────
   const applyFilters = useCallback((page = 1) => {
@@ -108,9 +113,11 @@ const Transactions = () => {
     setEndDate(ed)
     setCurrentPage(1)
     const params = { page: 1, limit: 10 }
-    if (filterType) params.type = filterType
-    if (sd) params.startDate = sd
-    if (ed) params.endDate   = ed
+    if (filterType)  params.type      = filterType
+    if (sd)          params.startDate = sd
+    if (ed)          params.endDate   = ed
+    if (minAmount)   params.minAmount = minAmount
+    if (maxAmount)   params.maxAmount = maxAmount
     fetchTransactions(params)
   }
 
@@ -122,6 +129,12 @@ const Transactions = () => {
     setShowCustomDate(false)
   }
 
+  // ── Handle Amount Filter Apply ─────────────────────────────────────────
+  const handleAmountApply = () => {
+    setCurrentPage(1)
+    fetchTransactions(buildParams(1))
+  }
+
   // ── Clear All Filters ──────────────────────────────────────────────────
   const clearAllFilters = () => {
     setFilterType('')
@@ -130,12 +143,17 @@ const Transactions = () => {
     setStartDate('')
     setEndDate('')
     setShowCustomDate(false)
+    setMinAmount('')
+    setMaxAmount('')
     setCurrentPage(1)
     fetchTransactions({ page: 1, limit: 10 })
   }
 
   const hasActiveFilters = filterType || searchTerm ||
-                           startDate  || endDate
+                           startDate  || endDate    ||
+                           minAmount  || maxAmount
+
+  const hasAdvancedFilters = minAmount || maxAmount
 
   // ── Handle Create / Update ─────────────────────────────────────────────
   const handleSubmit = async (data) => {
@@ -228,7 +246,7 @@ const Transactions = () => {
         display: 'flex', flexDirection: 'column', gap: '12px',
       }}>
 
-        {/* Row 1 — Search + Type Filter + Clear */}
+        {/* Row 1 — Search + Type + Advanced Toggle + Clear */}
         <div style={{
           display: 'flex', gap: '12px',
           flexWrap: 'wrap', alignItems: 'center',
@@ -278,11 +296,9 @@ const Transactions = () => {
               onChange={(e) => {
                 setFilterType(e.target.value)
                 setCurrentPage(1)
-                const params = { page: 1, limit: 10 }
-                if (e.target.value) params.type = e.target.value
-                if (startDate) params.startDate = startDate
-                if (endDate)   params.endDate   = endDate
-                fetchTransactions(params)
+                const params = buildParams(1)
+                params.type = e.target.value || undefined
+                fetchTransactions({ ...params, type: e.target.value })
               }}
               style={{
                 padding: '10px 14px', border: '1px solid #e5e7eb',
@@ -296,6 +312,37 @@ const Transactions = () => {
               <option value="expense">Expense</option>
             </select>
           </div>
+
+          {/* Advanced Filters Toggle */}
+          <button
+            onClick={() => setShowAdvanced(!showAdvanced)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '10px 14px',
+              border: '1px solid',
+              borderColor: showAdvanced || hasAdvancedFilters
+                ? '#2563eb' : '#e5e7eb',
+              borderRadius: '8px', fontSize: '13px',
+              fontWeight: '600',
+              color: showAdvanced || hasAdvancedFilters
+                ? '#2563eb' : '#6b7280',
+              background: showAdvanced || hasAdvancedFilters
+                ? '#eff6ff' : '#ffffff',
+              cursor: 'pointer',
+            }}
+          >
+            <SlidersHorizontal size={14} />
+            Advanced
+            {hasAdvancedFilters && (
+              <span style={{
+                background: '#2563eb', color: 'white',
+                borderRadius: '999px', fontSize: '11px',
+                fontWeight: '700', padding: '1px 6px',
+              }}>
+                ON
+              </span>
+            )}
+          </button>
 
           {/* Clear All */}
           {hasActiveFilters && (
@@ -320,24 +367,20 @@ const Transactions = () => {
           flexWrap: 'wrap', alignItems: 'center',
         }}>
           <Calendar size={16} color="#9ca3af" style={{ flexShrink: 0 }} />
-
           {[
-            { value: 'this_month',   label: 'This Month' },
-            { value: 'last_month',   label: 'Last Month' },
-            { value: 'last_3_months',label: 'Last 3 Months' },
-            { value: 'this_year',    label: 'This Year' },
-            { value: 'custom',       label: 'Custom Range' },
+            { value: 'this_month',    label: 'This Month' },
+            { value: 'last_month',    label: 'Last Month' },
+            { value: 'last_3_months', label: 'Last 3 Months' },
+            { value: 'this_year',     label: 'This Year' },
+            { value: 'custom',        label: 'Custom Range' },
           ].map((preset) => (
             <button
               key={preset.value}
               onClick={() => handlePreset(preset.value)}
               style={{
-                padding: '6px 14px',
-                borderRadius: '999px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                border: '1px solid',
+                padding: '6px 14px', borderRadius: '999px',
+                fontSize: '12px', fontWeight: '600',
+                cursor: 'pointer', border: '1px solid',
                 borderColor: datePreset === preset.value
                   ? '#2563eb' : '#e5e7eb',
                 background: datePreset === preset.value
@@ -350,30 +393,23 @@ const Transactions = () => {
               {preset.label}
             </button>
           ))}
-
-          {/* Active date range display */}
           {(startDate && endDate && datePreset !== 'custom') && (
-            <span style={{
-              fontSize: '12px', color: '#9ca3af', marginLeft: '4px',
-            }}>
+            <span style={{ fontSize: '12px', color: '#9ca3af' }}>
               {startDate} → {endDate}
             </span>
           )}
         </div>
 
-        {/* Row 3 — Custom Date Range (shown only when custom is selected) */}
+        {/* Row 3 — Custom Date Range */}
         {showCustomDate && (
           <div style={{
             display: 'flex', gap: '12px',
             alignItems: 'center', flexWrap: 'wrap',
-            padding: '12px 16px',
-            background: '#f9fafb',
-            borderRadius: '10px',
-            border: '1px solid #e5e7eb',
+            padding: '12px 16px', background: '#f9fafb',
+            borderRadius: '10px', border: '1px solid #e5e7eb',
           }}>
             <div style={{
-              display: 'flex', alignItems: 'center',
-              gap: '8px',
+              display: 'flex', alignItems: 'center', gap: '8px',
             }}>
               <label style={{
                 fontSize: '13px', fontWeight: '500', color: '#374151',
@@ -431,6 +467,102 @@ const Transactions = () => {
             >
               <X size={16} />
             </button>
+          </div>
+        )}
+
+        {/* Row 4 — Advanced Filters (Amount Range) */}
+        {showAdvanced && (
+          <div style={{
+            display: 'flex', gap: '16px',
+            alignItems: 'flex-end', flexWrap: 'wrap',
+            padding: '16px', background: '#f9fafb',
+            borderRadius: '10px', border: '1px solid #e5e7eb',
+          }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              gap: '6px', marginBottom: '2px',
+            }}>
+              <SlidersHorizontal size={14} color="#6b7280" />
+              <span style={{
+                fontSize: '13px', fontWeight: '600', color: '#374151',
+              }}>
+                Amount Range (₹)
+              </span>
+            </div>
+
+            {/* Min Amount */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', gap: '4px',
+            }}>
+              <label style={{
+                fontSize: '12px', fontWeight: '500', color: '#6b7280',
+              }}>
+                Min Amount
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="e.g. 500"
+                value={minAmount}
+                onChange={(e) => setMinAmount(e.target.value)}
+                style={{
+                  padding: '8px 12px', border: '1px solid #d1d5db',
+                  borderRadius: '8px', fontSize: '13px',
+                  outline: 'none', color: '#111827', width: '140px',
+                }}
+              />
+            </div>
+
+            {/* Max Amount */}
+            <div style={{
+              display: 'flex', flexDirection: 'column', gap: '4px',
+            }}>
+              <label style={{
+                fontSize: '12px', fontWeight: '500', color: '#6b7280',
+              }}>
+                Max Amount
+              </label>
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="e.g. 5000"
+                value={maxAmount}
+                onChange={(e) => setMaxAmount(e.target.value)}
+                style={{
+                  padding: '8px 12px', border: '1px solid #d1d5db',
+                  borderRadius: '8px', fontSize: '13px',
+                  outline: 'none', color: '#111827', width: '140px',
+                }}
+              />
+            </div>
+
+            <Button size="sm" onClick={handleAmountApply}>
+              Apply
+            </Button>
+
+            {hasAdvancedFilters && (
+              <button
+                onClick={() => {
+                  setMinAmount('')
+                  setMaxAmount('')
+                  setCurrentPage(1)
+                  const params = buildParams(1)
+                  delete params.minAmount
+                  delete params.maxAmount
+                  fetchTransactions(params)
+                }}
+                style={{
+                  background: 'none', border: 'none',
+                  cursor: 'pointer', color: '#9ca3af',
+                  fontSize: '13px', display: 'flex',
+                  alignItems: 'center', gap: '4px',
+                }}
+              >
+                <X size={14} /> Clear
+              </button>
+            )}
           </div>
         )}
       </div>
