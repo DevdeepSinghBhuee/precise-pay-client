@@ -5,7 +5,7 @@ import authApi from '../api/auth.api'
 import useAuth from './useAuth'
 import toast from 'react-hot-toast'
 
-const useTransactions = (filters = {}) => {
+const useTransactions = (initialFilters = {}) => {
   const [transactions, setTransactions]     = useState([])
   const [summary, setSummary]               = useState(null)
   const [pagination, setPagination]         = useState(null)
@@ -33,10 +33,10 @@ const useTransactions = (filters = {}) => {
   }, [])
 
   // ── Fetch Summary ──────────────────────────────────────────────────────
-  const fetchSummary = useCallback(async () => {
+  const fetchSummary = useCallback(async (params = {}) => {
     try {
       setSummaryLoading(true)
-      const response = await transactionApi.getSummary()
+      const response = await transactionApi.getSummary(params)
       setSummary(response.data.data.summary)
     } catch (err) {
       console.error('Failed to load summary:', err)
@@ -46,7 +46,6 @@ const useTransactions = (filters = {}) => {
   }, [])
 
   // ── Refresh User Balance in Sidebar ───────────────────────────────────
-  // After every mutation, re-fetch profile so sidebar balance updates
   const refreshUserBalance = useCallback(async () => {
     try {
       const response = await authApi.getProfile()
@@ -60,45 +59,45 @@ const useTransactions = (filters = {}) => {
   const createTransaction = useCallback(async (data) => {
     const response = await transactionApi.create(data)
     await Promise.all([
-      fetchTransactions(filters),
-      fetchSummary(),
-      refreshUserBalance(), // ← updates sidebar balance
+      fetchTransactions(initialFilters),
+      fetchSummary(initialFilters),
+      refreshUserBalance(),
     ])
     return response.data.data
-  }, [fetchTransactions, fetchSummary, refreshUserBalance, filters])
+  }, [fetchTransactions, fetchSummary, refreshUserBalance, initialFilters])
 
   // ── Update Transaction ─────────────────────────────────────────────────
   const updateTransaction = useCallback(async (id, data) => {
     const response = await transactionApi.update(id, data)
     await Promise.all([
-      fetchTransactions(filters),
-      fetchSummary(),
-      refreshUserBalance(), // ← updates sidebar balance
+      fetchTransactions(initialFilters),
+      fetchSummary(initialFilters),
+      refreshUserBalance(),
     ])
     return response.data.data
-  }, [fetchTransactions, fetchSummary, refreshUserBalance, filters])
+  }, [fetchTransactions, fetchSummary, refreshUserBalance, initialFilters])
 
   // ── Delete Transaction ─────────────────────────────────────────────────
   const deleteTransaction = useCallback(async (id) => {
     await transactionApi.delete(id)
     await Promise.all([
-      fetchTransactions(filters),
-      fetchSummary(),
-      refreshUserBalance(), // ← updates sidebar balance
+      fetchTransactions(initialFilters),
+      fetchSummary(initialFilters),
+      refreshUserBalance(),
     ])
-  }, [fetchTransactions, fetchSummary, refreshUserBalance, filters])
+  }, [fetchTransactions, fetchSummary, refreshUserBalance, initialFilters])
 
   // ── Refresh All ────────────────────────────────────────────────────────
   const refresh = useCallback(() => {
-    fetchTransactions(filters)
-    fetchSummary()
+    fetchTransactions(initialFilters)
+    fetchSummary(initialFilters)
     refreshUserBalance()
-  }, [fetchTransactions, fetchSummary, refreshUserBalance, filters])
+  }, [fetchTransactions, fetchSummary, refreshUserBalance, initialFilters])
 
   // ── Initial Fetch ──────────────────────────────────────────────────────
   useEffect(() => {
-    fetchTransactions(filters)
-    fetchSummary()
+    fetchTransactions(initialFilters)
+    fetchSummary(initialFilters)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

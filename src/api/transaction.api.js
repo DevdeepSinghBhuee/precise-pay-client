@@ -30,7 +30,7 @@ const transactionApi = {
   /**
    * GET /transactions/summary
    */
-  getSummary: () => api.get('/transactions/summary'),
+  getSummary: (params = {}) => api.get('/transactions/summary', { params }),
 }
 
 export default transactionApi

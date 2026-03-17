@@ -1,6 +1,5 @@
 // src/pages/Dashboard.jsx
-// eslint-disable-next-line no-unused-vars
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useCallback } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
@@ -9,10 +8,9 @@ import {
 import {
   TrendingUp, TrendingDown, Wallet,
   ArrowUpRight, ArrowDownRight, Plus,
-  ArrowLeftRight,
+  ArrowLeftRight, Calendar,
 } from 'lucide-react'
- 
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import useAuth from '../hooks/useAuth'
 import useTransactions from '../hooks/useTransactions'
 import { formatCurrency, formatDate } from '../utils/formatters'
@@ -25,24 +23,60 @@ const PIE_COLORS = [
   '#6366f1', '#84cc16',
 ]
 
-// ── Summary Card Component ─────────────────────────────────────────────────
+// ── Date Preset Helper ─────────────────────────────────────────────────────
+const getDatePreset = (preset) => {
+  const now   = new Date()
+  const year  = now.getFullYear()
+  const month = now.getMonth()
+
+  switch (preset) {
+    case 'this_month':
+      return {
+        startDate: new Date(year, month, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month + 1, 0).toISOString().split('T')[0],
+      }
+    case 'last_month':
+      return {
+        startDate: new Date(year, month - 1, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month, 0).toISOString().split('T')[0],
+      }
+    case 'last_3_months':
+      return {
+        startDate: new Date(year, month - 2, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, month + 1, 0).toISOString().split('T')[0],
+      }
+    case 'this_year':
+      return {
+        startDate: new Date(year, 0, 1).toISOString().split('T')[0],
+        endDate:   new Date(year, 11, 31).toISOString().split('T')[0],
+      }
+    default:
+      return { startDate: '', endDate: '' }
+  }
+}
+
+// ── Date Presets Config ────────────────────────────────────────────────────
+const DATE_PRESETS = [
+  { value: 'all',          label: 'All Time' },
+  { value: 'this_month',   label: 'This Month' },
+  { value: 'last_month',   label: 'Last Month' },
+  { value: 'last_3_months',label: 'Last 3 Months' },
+  { value: 'this_year',    label: 'This Year' },
+]
+
+// ── Summary Card ───────────────────────────────────────────────────────────
 const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
   <div style={{
-    background: '#ffffff',
-    borderRadius: '16px',
-    padding: '20px',
-    border: '1px solid #f3f4f6',
+    background: '#ffffff', borderRadius: '16px',
+    padding: '20px', border: '1px solid #f3f4f6',
     boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
-    flex: 1,
-    minWidth: '200px',
+    flex: 1, minWidth: '200px',
   }}>
     <div style={{
       display: 'flex', alignItems: 'center',
       justifyContent: 'space-between', marginBottom: '12px',
     }}>
-      <span style={{
-        fontSize: '13px', fontWeight: '500', color: '#6b7280',
-      }}>
+      <span style={{ fontSize: '13px', fontWeight: '500', color: '#6b7280' }}>
         {title}
       </span>
       <div style={{
@@ -53,15 +87,13 @@ const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
         {icon}
       </div>
     </div>
-    <div style={{
-      fontSize: '24px', fontWeight: '700', color: '#111827',
-    }}>
+    <div style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>
       {formatCurrency(amount || 0)}
     </div>
     {trend && (
       <div style={{
-        display: 'flex', alignItems: 'center', gap: '4px',
-        marginTop: '6px',
+        display: 'flex', alignItems: 'center',
+        gap: '4px', marginTop: '6px',
       }}>
         {trend === 'up'
           ? <ArrowUpRight size={14} color="#16a34a" />
@@ -78,7 +110,7 @@ const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
   </div>
 )
 
-// ── Custom Bar Chart Tooltip ───────────────────────────────────────────────
+// ── Custom Bar Tooltip ─────────────────────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
@@ -122,13 +154,12 @@ const CustomPieTooltip = ({ active, payload }) => {
         }}>
           {item.name}
         </p>
-        <p style={{
-          fontSize: '13px', color: item.payload.fill,
-          margin: 0,
-        }}>
+        <p style={{ fontSize: '13px', color: item.payload.fill, margin: 0 }}>
           {formatCurrency(item.value)}
         </p>
-        <p style={{ fontSize: '12px', color: '#9ca3af', margin: '2px 0 0' }}>
+        <p style={{
+          fontSize: '12px', color: '#9ca3af', margin: '2px 0 0',
+        }}>
           {item.payload.percentage}% of expenses
         </p>
       </div>
@@ -148,20 +179,14 @@ const renderCustomLabel = ({
   const x = cx + radius * Math.cos(-midAngle * RADIAN)
   const y = cy + radius * Math.sin(-midAngle * RADIAN)
   return (
-    <text
-      x={x} y={y}
-      fill="white"
-      textAnchor="middle"
-      dominantBaseline="central"
-      fontSize={12}
-      fontWeight={700}
-    >
+    <text x={x} y={y} fill="white" textAnchor="middle"
+          dominantBaseline="central" fontSize={12} fontWeight={700}>
       {`${percentage}%`}
     </text>
   )
 }
 
-// ── Helper: Time-based greeting ────────────────────────────────────────────
+// ── Greeting Helper ────────────────────────────────────────────────────────
 const getGreeting = () => {
   const hour = new Date().getHours()
   if (hour < 12) return 'Morning'
@@ -171,10 +196,28 @@ const getGreeting = () => {
 
 // ── Main Dashboard ─────────────────────────────────────────────────────────
 const Dashboard = () => {
-  const { user }  = useAuth()
-  const navigate  = useNavigate()
-  const { transactions, summary,
-          loading, summaryLoading } = useTransactions()
+  const { user }    = useAuth()
+  const navigate    = useNavigate()
+  const [activePeriod, setActivePeriod] = useState('all')
+
+  const {
+    transactions, summary,
+    loading, summaryLoading,
+    fetchTransactions, fetchSummary,
+  } = useTransactions()
+
+  // ── Handle Period Change ───────────────────────────────────────────────
+  const handlePeriodChange = useCallback((preset) => {
+    setActivePeriod(preset)
+    if (preset === 'all') {
+      fetchTransactions({ limit: 100 })
+      fetchSummary({})
+      return
+    }
+    const { startDate, endDate } = getDatePreset(preset)
+    fetchTransactions({ startDate, endDate, limit: 100 })
+    fetchSummary({ startDate, endDate })
+  }, [fetchTransactions, fetchSummary])
 
   // ── Bar Chart Data ─────────────────────────────────────────────────────
   const chartData = useMemo(() => {
@@ -189,7 +232,7 @@ const Dashboard = () => {
         monthMap[key] = { month: key, Income: 0, Expenses: 0 }
       }
       if (t.type === 'income') {
-        monthMap[key].Income += parseFloat(t.amount)
+        monthMap[key].Income   += parseFloat(t.amount)
       } else {
         monthMap[key].Expenses += parseFloat(t.amount)
       }
@@ -197,23 +240,21 @@ const Dashboard = () => {
     return Object.values(monthMap).slice(-6)
   }, [transactions])
 
-  // ── Pie Chart Data — Expenses by Category ─────────────────────────────
+  // ── Pie Chart Data ─────────────────────────────────────────────────────
   const pieData = useMemo(() => {
     const expenses = transactions.filter((t) => t.type === 'expense')
     if (!expenses.length) return []
-
     const categoryMap = {}
     expenses.forEach((t) => {
       const cat = t.category
-       ? t.category.charAt(0).toUpperCase() + t.category.slice(1).toLowerCase()
-       : 'Uncategorized'
+        ? t.category.charAt(0).toUpperCase() +
+          t.category.slice(1).toLowerCase()
+        : 'Uncategorized'
       if (!categoryMap[cat]) categoryMap[cat] = 0
       categoryMap[cat] += parseFloat(t.amount)
     })
-
     const total = Object.values(categoryMap)
       .reduce((sum, val) => sum + val, 0)
-
     return Object.entries(categoryMap)
       .sort((a, b) => b[1] - a[1])
       .map(([name, value]) => ({
@@ -223,8 +264,12 @@ const Dashboard = () => {
       }))
   }, [transactions])
 
-  // Recent transactions — last 5
   const recentTransactions = transactions.slice(0, 5)
+
+  // ── Active Period Label ────────────────────────────────────────────────
+  const activePeriodLabel = DATE_PRESETS.find(
+    (p) => p.value === activePeriod
+  )?.label || 'All Time'
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -236,7 +281,7 @@ const Dashboard = () => {
         color: 'white', display: 'flex',
         alignItems: 'center', justifyContent: 'space-between',
         flexWrap: 'wrap', gap: '16px',
-       }}>
+      }}>
         <div>
           <h2 style={{ fontSize: '20px', fontWeight: '700', margin: 0 }}>
             Good {getGreeting()}, {user?.fullName?.split(' ')[0]}! 👋
@@ -246,8 +291,8 @@ const Dashboard = () => {
           </p>
         </div>
         <button
-           
-          onClick={() => navigate('/transactions', { state: { openModal: true } })}
+          onClick={() => navigate('/transactions',
+            { state: { openModal: true } })}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: '8px',
             background: 'rgba(255,255,255,0.2)',
@@ -258,34 +303,79 @@ const Dashboard = () => {
             backdropFilter: 'blur(4px)',
           }}
         >
-         <Plus size={16} />
+          <Plus size={16} />
           Add Transaction
-         </button>
+        </button>
+      </div>
+
+      {/* ── Date Filter Bar ────────────────────────────────────────────── */}
+      <div style={{
+        background: '#ffffff', borderRadius: '14px',
+        padding: '14px 20px', border: '1px solid #f3f4f6',
+        display: 'flex', alignItems: 'center',
+        gap: '10px', flexWrap: 'wrap',
+      }}>
+        <div style={{
+          display: 'flex', alignItems: 'center',
+          gap: '8px', marginRight: '4px',
+        }}>
+          <Calendar size={16} color="#9ca3af" />
+          <span style={{
+            fontSize: '13px', fontWeight: '600', color: '#6b7280',
+          }}>
+            Period:
+          </span>
+        </div>
+
+        {DATE_PRESETS.map((preset) => (
+          <button
+            key={preset.value}
+            onClick={() => handlePeriodChange(preset.value)}
+            style={{
+              padding: '7px 16px',
+              borderRadius: '999px',
+              fontSize: '13px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              border: '1px solid',
+              borderColor: activePeriod === preset.value
+                ? '#2563eb' : '#e5e7eb',
+              background: activePeriod === preset.value
+                ? '#2563eb' : '#ffffff',
+              color: activePeriod === preset.value
+                ? '#ffffff' : '#6b7280',
+              transition: 'all 0.15s ease',
+            }}
+          >
+            {preset.label}
+          </button>
+        ))}
       </div>
 
       {/* ── Summary Cards ──────────────────────────────────────────────── */}
       {summaryLoading ? (
-        <div style={{ display: 'flex', justifyContent: 'center',
-                      padding: '40px' }}>
+        <div style={{
+          display: 'flex', justifyContent: 'center', padding: '40px',
+        }}>
           <Spinner size="lg" />
         </div>
       ) : (
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <SummaryCard
-            title="Total Balance"
+            title={`Balance — ${activePeriodLabel}`}
             amount={summary?.balance}
             bgColor="#eff6ff"
             icon={<Wallet size={20} color="#2563eb" />}
           />
           <SummaryCard
-            title="Total Income"
+            title={`Income — ${activePeriodLabel}`}
             amount={summary?.totalIncome}
             bgColor="#f0fdf4"
             trend="up"
             icon={<TrendingUp size={20} color="#16a34a" />}
           />
           <SummaryCard
-            title="Total Expenses"
+            title={`Expenses — ${activePeriodLabel}`}
             amount={summary?.totalExpenses}
             bgColor="#fef2f2"
             trend="down"
@@ -314,13 +404,14 @@ const Dashboard = () => {
             <p style={{
               fontSize: '13px', color: '#9ca3af', marginTop: '2px',
             }}>
-              Monthly breakdown
+              {activePeriodLabel} — monthly breakdown
             </p>
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center',
-                          padding: '40px' }}>
+            <div style={{
+              display: 'flex', justifyContent: 'center', padding: '40px',
+            }}>
               <Spinner />
             </div>
           ) : chartData.length === 0 ? (
@@ -330,7 +421,9 @@ const Dashboard = () => {
               <ArrowLeftRight size={40} style={{
                 margin: '0 auto 12px', opacity: 0.3, display: 'block',
               }} />
-              <p style={{ fontSize: '14px' }}>No transaction data yet.</p>
+              <p style={{ fontSize: '14px' }}>
+                No data for this period.
+              </p>
             </div>
           ) : (
             <ResponsiveContainer width="100%" height={260}>
@@ -379,27 +472,34 @@ const Dashboard = () => {
               <p style={{
                 fontSize: '13px', color: '#9ca3af', marginTop: '2px',
               }}>
-                Last 5 transactions
+                {activePeriodLabel}
               </p>
             </div>
-            <Link to="/transactions" style={{
-              fontSize: '13px', color: '#2563eb',
-              textDecoration: 'none', fontWeight: '500',
-            }}>
+            <button
+              onClick={() => navigate('/transactions')}
+              style={{
+                fontSize: '13px', color: '#2563eb',
+                background: 'none', border: 'none',
+                cursor: 'pointer', fontWeight: '500',
+              }}
+            >
               View all
-            </Link>
+            </button>
           </div>
 
           {loading ? (
-            <div style={{ display: 'flex', justifyContent: 'center',
-                          padding: '40px' }}>
+            <div style={{
+              display: 'flex', justifyContent: 'center', padding: '40px',
+            }}>
               <Spinner />
             </div>
           ) : recentTransactions.length === 0 ? (
             <div style={{
               textAlign: 'center', padding: '40px', color: '#9ca3af',
             }}>
-              <p style={{ fontSize: '14px' }}>No transactions yet.</p>
+              <p style={{ fontSize: '14px' }}>
+                No transactions for this period.
+              </p>
             </div>
           ) : (
             <div style={{
@@ -472,14 +572,17 @@ const Dashboard = () => {
           }}>
             Expense Breakdown
           </h3>
-          <p style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>
-            Spending distribution by category
+          <p style={{
+            fontSize: '13px', color: '#9ca3af', marginTop: '2px',
+          }}>
+            {activePeriodLabel} — spending by category
           </p>
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center',
-                        padding: '40px' }}>
+          <div style={{
+            display: 'flex', justifyContent: 'center', padding: '40px',
+          }}>
             <Spinner />
           </div>
         ) : pieData.length === 0 ? (
@@ -489,9 +592,8 @@ const Dashboard = () => {
             <TrendingDown size={40} style={{
               margin: '0 auto 12px', opacity: 0.3, display: 'block',
             }} />
-            <p style={{ fontSize: '14px' }}>No expense data yet.</p>
-            <p style={{ fontSize: '13px', marginTop: '4px' }}>
-              Add some expenses to see the breakdown.
+            <p style={{ fontSize: '14px' }}>
+              No expense data for this period.
             </p>
           </div>
         ) : (
@@ -499,7 +601,6 @@ const Dashboard = () => {
             display: 'flex', gap: '40px',
             alignItems: 'center', flexWrap: 'wrap',
           }}>
-
             {/* Pie Chart */}
             <div style={{ flexShrink: 0 }}>
               <ResponsiveContainer width={280} height={280}>
@@ -529,21 +630,16 @@ const Dashboard = () => {
 
             {/* Category Summary Table */}
             <div style={{ flex: 1, minWidth: '240px' }}>
-
-              {/* Total */}
               <div style={{
-                padding: '14px 16px',
-                background: '#fef2f2',
-                borderRadius: '12px',
-                marginBottom: '16px',
-                display: 'flex',
-                alignItems: 'center',
+                padding: '14px 16px', background: '#fef2f2',
+                borderRadius: '12px', marginBottom: '16px',
+                display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between',
               }}>
                 <span style={{
                   fontSize: '13px', fontWeight: '600', color: '#6b7280',
                 }}>
-                  Total Expenses
+                  Total Expenses — {activePeriodLabel}
                 </span>
                 <span style={{
                   fontSize: '16px', fontWeight: '800', color: '#dc2626',
@@ -554,7 +650,6 @@ const Dashboard = () => {
                 </span>
               </div>
 
-              {/* Category Rows */}
               <div style={{
                 display: 'flex', flexDirection: 'column', gap: '10px',
               }}>
@@ -562,14 +657,11 @@ const Dashboard = () => {
                   <div key={item.name} style={{
                     display: 'flex', alignItems: 'center', gap: '12px',
                   }}>
-                    {/* Color dot */}
                     <div style={{
                       width: '12px', height: '12px', borderRadius: '50%',
                       background: PIE_COLORS[index % PIE_COLORS.length],
                       flexShrink: 0,
                     }} />
-
-                    {/* Category name + progress bar */}
                     <div style={{ flex: 1 }}>
                       <div style={{
                         display: 'flex', justifyContent: 'space-between',
@@ -588,8 +680,6 @@ const Dashboard = () => {
                           {formatCurrency(item.value)}
                         </span>
                       </div>
-
-                      {/* Progress bar */}
                       <div style={{
                         height: '6px', background: '#f3f4f6',
                         borderRadius: '999px', overflow: 'hidden',
@@ -603,8 +693,6 @@ const Dashboard = () => {
                         }} />
                       </div>
                     </div>
-
-                    {/* Percentage */}
                     <span style={{
                       fontSize: '12px', fontWeight: '700',
                       color: '#9ca3af', minWidth: '36px',
