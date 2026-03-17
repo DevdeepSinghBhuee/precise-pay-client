@@ -89,6 +89,7 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
       {/* Col 2 — Category + Date stacked */}
       <div style={{
         display: 'flex', flexDirection: 'column', gap: '4px',
+        alignItems: 'flex-start',
       }}>
         <CategoryBadge category={t.category} />
         <span style={{ fontSize: '12px', color: '#9ca3af' }}>
