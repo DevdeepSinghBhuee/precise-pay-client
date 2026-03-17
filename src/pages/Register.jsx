@@ -49,20 +49,21 @@ const Register = () => {
   const strength = getPasswordStrength(watchedPassword)
 
   const onSubmit = async (data) => {
-    try {
-      await registerUser({
-        fullName:        data.fullName,
-        email:           data.email,
-        password:        data.password,
-        confirmPassword: data.confirmPassword,
-      })
-      navigate('/dashboard', { replace: true })
+   try {
+     await registerUser({
+      fullName:        data.fullName,
+      email:           data.email,
+      password:        data.password,
+      confirmPassword: data.confirmPassword,
+     })
+     toast.success('Account created! Please sign in.')
+     navigate('/login', { replace: true })
     } catch (error) {
-      const errData = error.response?.data
+    const errData = error.response?.data
       if (errData?.data?.errors) {
-        errData.data.errors.forEach((e) => toast.error(e.message))
+       errData.data.errors.forEach((e) => toast.error(e.message))
       } else {
-        toast.error(errData?.message || 'Registration failed.')
+      toast.error(errData?.message || 'Registration failed.')
       }
     }
   }
