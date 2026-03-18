@@ -2,7 +2,7 @@
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { TrendingUp, TrendingDown } from 'lucide-react'
+import { TrendingUp, TrendingDown, RefreshCw } from 'lucide-react'
 import Input from '../common/Input'
 import Button from '../common/Button'
 
@@ -24,6 +24,11 @@ const transactionSchema = z.object({
   category:    z.string().max(100).optional(),
   date:        z.string().min(1, 'Date is required.'),
   notes:       z.string().max(1000).optional(),
+  isRecurring: z.boolean().optional(),
+  recurringDay: z.preprocess(
+    (val) => (val === '' || val === undefined ? undefined : Number(val)),
+    z.number().int().min(1).max(28).optional()
+  ),
 })
 
 // ── TransactionForm Component ──────────────────────────────────────────────
@@ -36,13 +41,16 @@ const TransactionForm = ({ onSubmit, defaultValues, isSubmitting }) => {
   } = useForm({
     resolver: zodResolver(transactionSchema),
     defaultValues: defaultValues || {
-      type: 'expense',
-      date: new Date().toISOString().split('T')[0],
+      type:         'expense',
+      date:         new Date().toISOString().split('T')[0],
+      isRecurring:  false,
+      recurringDay: '',
     },
   })
 
   // eslint-disable-next-line react-hooks/incompatible-library
-  const selectedType = watch('type')
+  const selectedType  = watch('type')
+  const isRecurring   = watch('isRecurring')
 
   return (
     <form
@@ -96,7 +104,7 @@ const TransactionForm = ({ onSubmit, defaultValues, isSubmitting }) => {
         )}
       </div>
 
-      {/* Amount — raw input so step=0.01 works reliably */}
+      {/* Amount */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={{
           fontSize: '14px', fontWeight: '500', color: '#374151',
@@ -167,7 +175,7 @@ const TransactionForm = ({ onSubmit, defaultValues, isSubmitting }) => {
         <textarea
           {...register('notes')}
           placeholder="Any additional notes..."
-          rows={3}
+          rows={2}
           style={{
             width: '100%', borderRadius: '8px',
             border: '1px solid #d1d5db', padding: '10px 14px',
@@ -184,6 +192,144 @@ const TransactionForm = ({ onSubmit, defaultValues, isSubmitting }) => {
             e.target.style.boxShadow = 'none'
           }}
         />
+      </div>
+
+      {/* ── Recurring Toggle ─────────────────────────────────────────── */}
+      <div style={{
+        background: '#f9fafb', borderRadius: '12px',
+        padding: '16px', border: '1px solid #e5e7eb',
+      }}>
+        {/* Toggle Row */}
+        <label style={{
+          display: 'flex', alignItems: 'center',
+          justifyContent: 'space-between', cursor: 'pointer',
+        }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '10px',
+          }}>
+            <div style={{
+              width: '36px', height: '36px', borderRadius: '10px',
+              background: isRecurring ? '#eff6ff' : '#f3f4f6',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <RefreshCw
+                size={16}
+                color={isRecurring ? '#2563eb' : '#9ca3af'}
+              />
+            </div>
+            <div>
+              <p style={{
+                fontSize: '14px', fontWeight: '600',
+                color: '#111827', margin: 0,
+              }}>
+                Recurring Transaction
+              </p>
+              <p style={{
+                fontSize: '12px', color: '#9ca3af',
+                margin: 0, marginTop: '2px',
+              }}>
+                Auto-create this every month
+              </p>
+            </div>
+          </div>
+
+          {/* Toggle Switch */}
+          <div style={{ position: 'relative', flexShrink: 0 }}>
+            <input
+              type="checkbox"
+              {...register('isRecurring')}
+              style={{ display: 'none' }}
+            />
+            <div
+              onClick={() => {}}
+              style={{
+                width: '44px', height: '24px',
+                borderRadius: '999px',
+                background: isRecurring ? '#2563eb' : '#d1d5db',
+                position: 'relative',
+                transition: 'background 0.2s ease',
+                cursor: 'pointer',
+              }}
+            >
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: isRecurring ? '22px' : '2px',
+                width: '20px', height: '20px',
+                borderRadius: '50%',
+                background: '#ffffff',
+                transition: 'left 0.2s ease',
+                boxShadow: '0 1px 4px rgba(0,0,0,0.15)',
+              }} />
+            </div>
+          </div>
+        </label>
+
+        {/* Day Picker — shown only when recurring is ON */}
+        {isRecurring && (
+          <div style={{ marginTop: '16px' }}>
+            <label style={{
+              fontSize: '13px', fontWeight: '500',
+              color: '#374151', display: 'block', marginBottom: '8px',
+            }}>
+              Day of Month (1–28)
+            </label>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <input
+                type="number"
+                min="1"
+                max="28"
+                placeholder="e.g. 1"
+                {...register('recurringDay')}
+                style={{
+                  width: '100px', padding: '8px 12px',
+                  border: '1px solid #d1d5db', borderRadius: '8px',
+                  fontSize: '14px', color: '#111827',
+                  outline: 'none',
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = '#3b82f6'
+                  e.target.style.boxShadow =
+                    '0 0 0 3px rgba(59,130,246,0.15)'
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = '#d1d5db'
+                  e.target.style.boxShadow = 'none'
+                }}
+              />
+              <p style={{
+                fontSize: '13px', color: '#6b7280', margin: 0,
+              }}>
+                This transaction will auto-create on this day every month.
+              </p>
+            </div>
+            {errors.recurringDay && (
+              <p style={{
+                fontSize: '12px', color: '#ef4444', marginTop: '4px',
+              }}>
+                {errors.recurringDay.message}
+              </p>
+            )}
+
+            {/* Info box */}
+            <div style={{
+              marginTop: '12px', padding: '10px 14px',
+              background: '#eff6ff', borderRadius: '8px',
+              border: '1px solid #bfdbfe',
+              display: 'flex', alignItems: 'flex-start', gap: '8px',
+            }}>
+              <RefreshCw size={14} color="#2563eb"
+                         style={{ flexShrink: 0, marginTop: '1px' }} />
+              <p style={{
+                fontSize: '12px', color: '#1d4ed8', margin: 0,
+              }}>
+                We cap at day 28 to avoid issues with February.
+                Your transaction will auto-create at midnight on the
+                selected day each month.
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Submit */}

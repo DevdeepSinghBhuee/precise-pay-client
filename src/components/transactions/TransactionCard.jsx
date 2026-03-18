@@ -1,5 +1,5 @@
 // src/components/transactions/TransactionCard.jsx
-import { TrendingUp, TrendingDown, Pencil, Trash2 } from 'lucide-react'
+import { TrendingUp, TrendingDown, Pencil, Trash2, RefreshCw } from 'lucide-react'
 import { formatCurrency, formatDate } from '../../utils/formatters'
 
 // ── Category Badge ─────────────────────────────────────────────────────────
@@ -69,12 +69,29 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
           }
         </div>
         <div>
-          <p style={{
-            fontSize: '14px', fontWeight: '600',
-            color: '#111827', margin: 0,
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '6px',
           }}>
-            {t.description}
-          </p>
+            <p style={{
+              fontSize: '14px', fontWeight: '600',
+              color: '#111827', margin: 0,
+            }}>
+              {t.description}
+            </p>
+            {/* Recurring Badge */}
+            {t.isRecurring && (
+              <span style={{
+                display: 'inline-flex', alignItems: 'center', gap: '3px',
+                padding: '2px 7px', borderRadius: '999px',
+                fontSize: '11px', fontWeight: '600',
+                background: '#eff6ff', color: '#2563eb',
+                flexShrink: 0,
+              }}>
+                <RefreshCw size={10} />
+                Monthly
+              </span>
+            )}
+          </div>
           {t.notes && (
             <p style={{
               fontSize: '12px', color: '#9ca3af',
@@ -88,8 +105,8 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
 
       {/* Col 2 — Category + Date stacked */}
       <div style={{
-        display: 'flex', flexDirection: 'column', gap: '4px',
-        alignItems: 'flex-start',
+        display: 'flex', flexDirection: 'column',
+        gap: '4px', alignItems: 'flex-start',
       }}>
         <CategoryBadge category={t.category} />
         <span style={{ fontSize: '12px', color: '#9ca3af' }}>
