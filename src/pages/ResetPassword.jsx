@@ -3,7 +3,6 @@ import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { Lock, TrendingUp, Eye, EyeOff, CheckCircle } from 'lucide-react'
 import { z } from 'zod'
-import api from '../api/axios'
 import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
 
@@ -20,6 +19,8 @@ const passwordSchema = z.object({
   (data) => data.newPassword === data.confirmPassword,
   { message: 'Passwords do not match.', path: ['confirmPassword'] }
 )
+
+const API_URL = import.meta.env.VITE_API_BASE_URL
 
 const ResetPassword = () => {
   const { token }                   = useParams()
@@ -49,13 +50,23 @@ const ResetPassword = () => {
 
     setLoading(true)
     try {
-      await api.post(`/auth/reset-password/${token}`, { newPassword })
-      setSuccess(true)
-      setTimeout(() => navigate('/login', { replace: true }), 3000)
-    } catch (error) {
-      const message = error.response?.data?.message
-        || 'Reset link is invalid or expired.'
-      toast.error(message)
+      const response = await fetch(
+        `${API_URL}/auth/reset-password/${token}`,
+        {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ newPassword }),
+        }
+      )
+      const data = await response.json()
+      if (response.ok) {
+        setSuccess(true)
+        setTimeout(() => navigate('/login', { replace: true }), 3000)
+      } else {
+        toast.error(data?.message || 'Reset link is invalid or expired.')
+      }
+    } catch {
+      toast.error('Network error. Please check your connection.')
     } finally {
       setLoading(false)
     }

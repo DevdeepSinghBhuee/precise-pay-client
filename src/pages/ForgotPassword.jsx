@@ -2,9 +2,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Mail, TrendingUp, ArrowLeft, CheckCircle } from 'lucide-react'
-import api from '../api/axios'
 import Button from '../components/common/Button'
 import toast from 'react-hot-toast'
+
+const API_URL = import.meta.env.VITE_API_BASE_URL
 
 const ForgotPassword = () => {
   const [email, setEmail]       = useState('')
@@ -19,10 +20,19 @@ const ForgotPassword = () => {
     }
     setLoading(true)
     try {
-      await api.post('/auth/forgot-password', { email })
-      setSubmitted(true)
+      const response = await fetch(`${API_URL}/auth/forgot-password`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email }),
+      })
+      const data = await response.json()
+      if (response.ok) {
+        setSubmitted(true)
+      } else {
+        toast.error(data?.message || 'Something went wrong.')
+      }
     } catch {
-      toast.error('Something went wrong. Please try again.')
+      toast.error('Network error. Please check your connection.')
     } finally {
       setLoading(false)
     }
