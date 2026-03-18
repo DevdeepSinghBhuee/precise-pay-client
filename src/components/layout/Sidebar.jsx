@@ -8,6 +8,7 @@ import {
   TrendingUp,
   X,
   Wallet,
+  Target,
 } from 'lucide-react'
 import useAuth from '../../hooks/useAuth'
 import { formatCurrency } from '../../utils/formatters'
@@ -22,6 +23,11 @@ const NAV_ITEMS = [
     path:  '/transactions',
     label: 'Transactions',
     icon:  ArrowLeftRight,
+  },
+  {
+    path:  '/budgets',      
+    label: 'Budgets',       
+    icon:  Target,          
   },
   {
     path:  '/profile',

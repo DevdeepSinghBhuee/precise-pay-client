@@ -4,11 +4,12 @@ import ProtectedRoute from './components/common/ProtectedRoute'
 import { AuthProvider } from './context/AuthContext'
 
 // Pages
-import Login from './pages/Login'
-import Register from './pages/Register'
-import Dashboard from './pages/Dashboard'
+import Login        from './pages/Login'
+import Register     from './pages/Register'
+import Dashboard    from './pages/Dashboard'
 import Transactions from './pages/Transactions'
-import Profile from './pages/Profile'
+import Profile      from './pages/Profile'
+import Budgets      from './pages/Budgets'
 
 // Layout
 import DashboardLayout from './components/layout/DashboardLayout'
@@ -26,6 +27,7 @@ const App = () => {
           <Route element={<DashboardLayout />}>
             <Route path="/dashboard"    element={<Dashboard />} />
             <Route path="/transactions" element={<Transactions />} />
+            <Route path="/budgets"      element={<Budgets />} />
             <Route path="/profile"      element={<Profile />} />
           </Route>
         </Route>

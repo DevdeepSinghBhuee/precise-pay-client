@@ -6,6 +6,7 @@ import useAuth from '../../hooks/useAuth'
 const PAGE_TITLES = {
   '/dashboard':    'Dashboard',
   '/transactions': 'Transactions',
+  '/budgets':      'Budget Goals',
   '/profile':      'Profile',
 }
 
