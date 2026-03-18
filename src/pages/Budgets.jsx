@@ -355,11 +355,13 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
               onClick={() => setColor(c)}
               style={{
                 width: '32px', height: '32px',
+                minWidth: '32px', minHeight: '32px',
                 borderRadius: '50%', background: c,
                 border: color === c
                   ? '3px solid #111827'
                   : '3px solid transparent',
                 cursor: 'pointer', outline: 'none',
+                flexShrink: 0, padding: 0,
                 transition: 'transform 0.15s ease',
                 transform: color === c ? 'scale(1.2)' : 'scale(1)',
               }}
