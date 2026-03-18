@@ -118,6 +118,19 @@ const Login = () => {
                 </button>
               }
             />
+             
+             {/* Add this after the password Input and before the submit button */}
+            <div style={{ textAlign: 'right', marginTop: '-8px' }}>
+             <Link
+               to="/forgot-password"
+               style={{
+                 fontSize: '13px', color: '#2563eb',
+                 textDecoration: 'none', fontWeight: '500',
+                }}
+              >
+                Forgot password?
+              </Link>   
+            </div>
 
             <div style={{ marginTop: '4px' }}>
               <Button
