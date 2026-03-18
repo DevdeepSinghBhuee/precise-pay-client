@@ -623,6 +623,8 @@ const Transactions = () => {
             category:    editingTx.category || '',
             date:        editingTx.date,
             notes:       editingTx.notes || '',
+            isRecurring:  editingTx.isRecurring || false,
+            recurringDay: editingTx.recurringDay || '',
           } : null}
         />
       </Modal>
