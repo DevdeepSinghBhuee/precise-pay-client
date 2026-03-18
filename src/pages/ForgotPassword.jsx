@@ -13,30 +13,41 @@ const ForgotPassword = () => {
   const [submitted, setSubmitted] = useState(false)
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!email.trim()) {
+     e.preventDefault()
+     if (!email.trim()) {
       toast.error('Please enter your email address.')
-      return
+     return
     }
     setLoading(true)
     try {
+      const controller = new AbortController()
+      const timeoutId  = setTimeout(() => controller.abort(), 15000) // 15s timeout
+
       const response = await fetch(`${API_URL}/auth/forgot-password`, {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({ email }),
+        signal:  controller.signal,
       })
-      const data = await response.json()
+
+    clearTimeout(timeoutId)
+
       if (response.ok) {
-        setSubmitted(true)
-      } else {
+      setSubmitted(true)
+     } else {
+        const data = await response.json().catch(() => ({}))
         toast.error(data?.message || 'Something went wrong.')
       }
-    } catch {
-      toast.error('Network error. Please check your connection.')
+    } catch (err) {
+     if (err.name === 'AbortError') {
+       toast.error('Request timed out. Please try again.')
+     } else {
+       toast.error('Network error. Please check your connection.')
+     }
     } finally {
-      setLoading(false)
-    }
-  }
+     setLoading(false)
+   }
+}
 
   return (
     <div style={{
