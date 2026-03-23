@@ -631,7 +631,8 @@ const Dashboard = () => {
             {/* Category Summary Table */}
             <div style={{ flex: 1, minWidth: '240px' }}>
               <div style={{
-                padding: '14px 16px', background: '#fef2f2',
+                padding: '14px 16px',
+                background: 'var(--danger-light)',
                 borderRadius: '12px', marginBottom: '16px',
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between',
@@ -675,7 +676,7 @@ const Dashboard = () => {
                         </span>
                         <span style={{
                           fontSize: '13px', fontWeight: '700',
-                          color: '#374151',
+                          color: 'var(--text-primary)',
                         }}>
                           {formatCurrency(item.value)}
                         </span>
