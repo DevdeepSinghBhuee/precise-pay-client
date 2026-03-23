@@ -144,12 +144,13 @@ const IncomeLeftCard = ({ summary, periodLabel }) => {
         </span>
         <div style={{
           width: '40px', height: '40px', borderRadius: '12px',
-          background: isPositive ? 'var(--success-light)' : 'var(--danger-light)',
+          background: isPositive ? '#f0fdf4' : '#fef2f2',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
         }}>
           {isPositive
-            ? <TrendingUp size={20} color="var(--success)" />
-            : <TrendingDown size={20} color="var(--danger)" />
+            ? <TrendingUp size={20} color="#16a34a" />
+            : <TrendingDown size={20} color="#dc2626" />
           }
         </div>
       </div>

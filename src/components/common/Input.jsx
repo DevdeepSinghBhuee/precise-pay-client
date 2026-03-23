@@ -16,7 +16,10 @@ const Input = ({
 
       {/* Label */}
       {label && (
-        <label className="text-sm font-medium text-gray-700">
+        <label style={{
+          fontSize: '14px', fontWeight: '500',
+          color: 'var(--text-secondary)',
+        }}>
           {label}
         </label>
       )}
@@ -44,9 +47,9 @@ const Input = ({
             width: '100%',
             borderRadius: '8px',
             border: error ? '1px solid #f87171' : '1px solid #d1d5db',
-            backgroundColor: error ? '#fef2f2' : '#ffffff',
+            background: 'var(--bg-input)',
             fontSize: '15px',
-            color: '#111827',
+            color: 'var(--text-primary)',
             outline: 'none',
             paddingTop: '14px',
             paddingBottom: '14px',
