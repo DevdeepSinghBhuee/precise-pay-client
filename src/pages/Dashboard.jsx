@@ -120,7 +120,7 @@ const IncomeLeftCard = ({ summary, periodLabel }) => {
   const isPositive = left >= 0
   const percentage = income > 0
     ? Math.min(100, Math.round((expenses / income) * 100))
-    : 0
+    : expenses > 0 ? 100 : 0
 
   return (
     <div style={{
@@ -147,9 +147,10 @@ const IncomeLeftCard = ({ summary, periodLabel }) => {
           background: isPositive ? 'var(--success-light)' : 'var(--danger-light)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
-          <span style={{ fontSize: '18px' }}>
-            {isPositive ? '💰' : '⚠️'}
-          </span>
+          {isPositive
+            ? <TrendingUp size={20} color="var(--success)" />
+            : <TrendingDown size={20} color="var(--danger)" />
+          }
         </div>
       </div>
 
@@ -170,7 +171,7 @@ const IncomeLeftCard = ({ summary, periodLabel }) => {
       }}>
         <div style={{
           height: '100%',
-          width: `${percentage}%`,
+          width: `${Math.max(percentage, 2)}%`,
           background: percentage >= 100
             ? 'var(--danger)'
             : percentage >= 80
