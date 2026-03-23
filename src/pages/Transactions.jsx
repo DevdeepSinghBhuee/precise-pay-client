@@ -13,6 +13,7 @@ import Spinner from '../components/common/Spinner'
 import TransactionForm from '../components/transactions/TransactionForm'
 import TransactionList from '../components/transactions/TransactionList'
 import toast from 'react-hot-toast'
+import transactionApi from '../api/transaction.api'
 
 // ── Date Preset Helpers ────────────────────────────────────────────────────
 const getDatePreset = (preset) => {
@@ -66,6 +67,7 @@ const Transactions = () => {
   const [minAmount, setMinAmount]           = useState('')
   const [maxAmount, setMaxAmount]           = useState('')
   const [showAdvanced, setShowAdvanced]     = useState(false)
+  const [categories, setCategories]         = useState([])
 
   const location = useLocation()
 
@@ -83,6 +85,21 @@ const Transactions = () => {
     }
   }, [location.state])
 
+  // ── Fetch categories on mount ──────────────────────────────────────────
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await transactionApi.getCategories()
+        setCategories(response.data.data.categories || [])
+      } catch {
+        // silently fail
+      }
+    }
+    fetchCategories()
+  }, [])
+
+  const [filterCategory, setFilterCategory] = useState('')
+
   // ── Build params from all active filters ──────────────────────────────
   const buildParams = useCallback((page = 1) => {
     const params = { page, limit: 10 }
@@ -91,8 +108,9 @@ const Transactions = () => {
     if (endDate)    params.endDate   = endDate
     if (minAmount)  params.minAmount = minAmount
     if (maxAmount)  params.maxAmount = maxAmount
+    if (filterCategory) params.category = filterCategory
     return params
-  }, [filterType, startDate, endDate, minAmount, maxAmount])
+  }, [filterType, startDate, endDate, minAmount, maxAmount, filterCategory])
 
   // ── Apply Filters ──────────────────────────────────────────────────────
   const applyFilters = useCallback((page = 1) => {
@@ -145,13 +163,15 @@ const Transactions = () => {
     setShowCustomDate(false)
     setMinAmount('')
     setMaxAmount('')
+    setFilterCategory('')
     setCurrentPage(1)
     fetchTransactions({ page: 1, limit: 10 })
   }
 
   const hasActiveFilters = filterType || searchTerm ||
                            startDate  || endDate    ||
-                           minAmount  || maxAmount
+                           minAmount  || maxAmount  ||
+                           filterCategory
 
   const hasAdvancedFilters = minAmount || maxAmount
 
@@ -312,6 +332,34 @@ const Transactions = () => {
               <option value="expense">Expense</option>
             </select>
           </div>
+
+          {/* Category Filter */}
+          {categories.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <select
+                value={filterCategory}
+                onChange={(e) => {
+                  setFilterCategory(e.target.value)
+                  setCurrentPage(1)
+                  const params = buildParams(1)
+                  params.category = e.target.value || undefined
+                  fetchTransactions({ ...params, category: e.target.value })
+                }}
+                style={{
+                  padding: '10px 14px',
+                  border: '1px solid var(--border-input)',
+                  borderRadius: '8px', fontSize: '14px',
+                  outline: 'none', color: 'var(--text-primary)',
+                  background: 'var(--bg-card)', cursor: 'pointer',
+                }}
+              >
+                <option value="">All Categories</option>
+                {categories.map((cat) => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {/* Advanced Filters Toggle */}
           <button

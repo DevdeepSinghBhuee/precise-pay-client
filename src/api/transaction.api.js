@@ -31,6 +31,11 @@ const transactionApi = {
    * GET /transactions/summary
    */
   getSummary: (params = {}) => api.get('/transactions/summary', { params }),
+
+  /**
+   * GET /transactions/categories
+   */
+  getCategories: () => api.get('/transactions/categories'),
 }
 
 export default transactionApi
