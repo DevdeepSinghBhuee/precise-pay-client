@@ -173,10 +173,10 @@ const IncomeLeftCard = ({ summary, periodLabel }) => {
           height: '100%',
           width: `${Math.max(percentage, 2)}%`,
           background: percentage >= 100
-            ? 'var(--danger)'
+            ? '#ef4444'
             : percentage >= 80
               ? '#f59e0b'
-              : 'var(--success)',
+              : '#16a34a',
           borderRadius: '999px',
           transition: 'width 0.6s ease',
         }} />

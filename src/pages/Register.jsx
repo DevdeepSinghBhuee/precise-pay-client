@@ -71,7 +71,7 @@ const Register = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #eef2ff 100%)',
+      background: 'var(--bg-secondary)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -101,20 +101,20 @@ const Register = () => {
 
         {/* Card */}
         <div style={{
-          background: '#ffffff',
+          background: 'var(--bg-card)',
           borderRadius: '20px',
           padding: '40px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-          border: '1px solid #f3f4f6',
+          border: '1px solid var(--border)',
         }}>
 
           {/* Card Header */}
           <div style={{ marginBottom: '28px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '700',
-                         color: '#111827', margin: 0 }}>
+                         color: 'var(--text-primary)', margin: 0 }}>
               Create account
             </h2>
-            <p style={{ color: '#6b7280', fontSize: '14px', marginTop: '6px' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginTop: '6px' }}>
               Join thousands managing their finances precisely
             </p>
           </div>

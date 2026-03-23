@@ -52,7 +52,7 @@ const ForgotPassword = () => {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #eef2ff 100%)',
+      background: 'var(--bg-secondary)',
       display: 'flex', alignItems: 'center',
       justifyContent: 'center', padding: '24px',
     }}>
@@ -79,9 +79,9 @@ const ForgotPassword = () => {
 
         {/* Card */}
         <div style={{
-          background: '#ffffff', borderRadius: '20px',
+          background: 'var(--bg-card)', borderRadius: '20px',
           padding: '40px', boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-          border: '1px solid #f3f4f6',
+          border: '1px solid var(--border)',
         }}>
 
           {!submitted ? (
@@ -90,12 +90,12 @@ const ForgotPassword = () => {
               <div style={{ marginBottom: '28px' }}>
                 <h2 style={{
                   fontSize: '22px', fontWeight: '700',
-                  color: '#111827', margin: 0,
+                  color: 'var(--text-primary)', margin: 0,
                 }}>
                   Forgot your password?
                 </h2>
                 <p style={{
-                  color: '#6b7280', fontSize: '14px', marginTop: '8px',
+                  color: 'var(--text-secondary)', fontSize: '14px', marginTop: '8px',
                 }}>
                   Enter your email and we'll send you a link to reset it.
                 </p>

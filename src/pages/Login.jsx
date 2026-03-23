@@ -35,7 +35,7 @@ const Login = () => {
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 50%, #eef2ff 100%)',
+        background: 'var(--bg-secondary)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -66,20 +66,20 @@ const Login = () => {
 
         {/* Card */}
         <div style={{
-          background: '#ffffff',
+          background: 'var(--bg-card)',
           borderRadius: '20px',
           padding: '40px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
-          border: '1px solid #f3f4f6',
+          border: '1px solid var(--border)',
         }}>
 
           {/* Card Header */}
           <div style={{ marginBottom: '28px' }}>
             <h2 style={{ fontSize: '24px', fontWeight: '700',
-                         color: '#111827', margin: 0 }}>
+                         color: 'var(--text-primary)', margin: 0 }}>
               Welcome back
             </h2>
-            <p style={{ color: '#6b7280', fontSize: '14px',
+            <p style={{ color: 'var(--text-secondary)', fontSize: '14px',
                         marginTop: '6px' }}>
               Sign in to your account to continue
             </p>
@@ -149,11 +149,11 @@ const Login = () => {
             display: 'flex', alignItems: 'center',
             margin: '24px 0', gap: '12px',
           }}>
-            <div style={{ flex: 1, height: '1px', background: '#f3f4f6' }} />
-            <span style={{ color: '#9ca3af', fontSize: '12px' }}>
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
+            <span style={{ color: 'var(--text-muted)', fontSize: '12px' }}>
               Don't have an account?
             </span>
-            <div style={{ flex: 1, height: '1px', background: '#f3f4f6' }} />
+            <div style={{ flex: 1, height: '1px', background: 'var(--border)' }} />
           </div>
 
           <Link to="/register" style={{ textDecoration: 'none' }}>
