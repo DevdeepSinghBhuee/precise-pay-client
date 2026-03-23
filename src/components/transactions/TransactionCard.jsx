@@ -16,7 +16,7 @@ const CategoryBadge = ({ category }) => {
     transport: { bg: '#fff7ed', color: '#ea580c' },
   }
   const key    = category.toLowerCase()
-  const colors = colorMap[key] || { bg: '#f3f4f6', color: '#6b7280' }
+  const colors = colorMap[key] || { bg: 'var(--bg-muted)', color: 'var(--text-secondary)' }
 
   return (
     <span style={{
@@ -109,7 +109,7 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
         gap: '4px', alignItems: 'flex-start',
       }}>
         <CategoryBadge category={t.category} />
-        <span style={{ fontSize: '12px', color: '#9ca3af' }}>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
           {formatDate(t.date)}
         </span>
       </div>
@@ -141,9 +141,9 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
           onClick={() => onEdit(t)}
           title="Edit"
           style={{
-            background: '#f3f4f6', border: 'none',
+            background: 'var(--bg-muted)', border: 'none',
             borderRadius: '8px', padding: '8px',
-            cursor: 'pointer', color: '#6b7280',
+            cursor: 'pointer', color: 'var(--text-secondary)',
             display: 'flex', alignItems: 'center',
             transition: 'all 0.15s',
           }}
@@ -152,8 +152,8 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
             e.currentTarget.style.color = '#4f46e5'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f3f4f6'
-            e.currentTarget.style.color = '#6b7280'
+            e.currentTarget.style.background = 'var(--bg-muted)'
+            e.currentTarget.style.color = 'var(--text-secondary)'
           }}
         >
           <Pencil size={14} />
