@@ -110,6 +110,111 @@ const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
   </div>
 )
 
+// ── Income Left Card ───────────────────────────────────────────────────────
+const IncomeLeftCard = ({ summary, periodLabel }) => {
+  if (!summary) return null
+
+  const income   = parseFloat(summary.totalIncome  || 0)
+  const expenses = parseFloat(summary.totalExpenses || 0)
+  const left     = income - expenses
+  const isPositive = left >= 0
+  const percentage = income > 0
+    ? Math.min(100, Math.round((expenses / income) * 100))
+    : 0
+
+  return (
+    <div style={{
+      background: 'var(--bg-card)',
+      borderRadius: '16px',
+      padding: '20px',
+      border: `1px solid ${isPositive ? 'var(--border)' : '#fecaca'}`,
+      boxShadow: '0 2px 12px var(--shadow)',
+      flex: 1, minWidth: '200px',
+    }}>
+      {/* Header */}
+      <div style={{
+        display: 'flex', alignItems: 'center',
+        justifyContent: 'space-between', marginBottom: '12px',
+      }}>
+        <span style={{
+          fontSize: '13px', fontWeight: '500',
+          color: 'var(--text-muted)',
+        }}>
+          Income Left — {periodLabel}
+        </span>
+        <div style={{
+          width: '40px', height: '40px', borderRadius: '12px',
+          background: isPositive ? 'var(--success-light)' : 'var(--danger-light)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span style={{ fontSize: '18px' }}>
+            {isPositive ? '💰' : '⚠️'}
+          </span>
+        </div>
+      </div>
+
+      {/* Amount */}
+      <div style={{
+        fontSize: '24px', fontWeight: '700',
+        color: isPositive ? 'var(--success)' : 'var(--danger)',
+        marginBottom: '10px',
+      }}>
+        {isPositive ? '+' : '-'}{formatCurrency(Math.abs(left))}
+      </div>
+
+      {/* Progress Bar — expenses vs income */}
+      <div style={{
+        height: '6px', background: 'var(--border)',
+        borderRadius: '999px', overflow: 'hidden',
+        marginBottom: '8px',
+      }}>
+        <div style={{
+          height: '100%',
+          width: `${percentage}%`,
+          background: percentage >= 100
+            ? 'var(--danger)'
+            : percentage >= 80
+              ? '#f59e0b'
+              : 'var(--success)',
+          borderRadius: '999px',
+          transition: 'width 0.6s ease',
+        }} />
+      </div>
+
+      {/* Labels */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <span style={{
+          fontSize: '12px', color: 'var(--text-muted)',
+        }}>
+          {percentage}% of income spent
+        </span>
+        {isPositive ? (
+          <span style={{
+            fontSize: '11px', fontWeight: '600',
+            color: 'var(--success)',
+            background: 'var(--success-light)',
+            padding: '2px 8px', borderRadius: '999px',
+          }}>
+            ↗ Carries to next month
+          </span>
+        ) : (
+          <span style={{
+            fontSize: '11px', fontWeight: '600',
+            color: 'var(--danger)',
+            background: 'var(--danger-light)',
+            padding: '2px 8px', borderRadius: '999px',
+          }}>
+            ↘ Over budget
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ── Custom Bar Tooltip ─────────────────────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
@@ -381,8 +486,12 @@ const Dashboard = () => {
             trend="down"
             icon={<TrendingDown size={20} color="#dc2626" />}
           />
+          <IncomeLeftCard
+            summary={summary}
+            periodLabel={activePeriodLabel}
+          />
         </div>
-      )}
+      ))
 
       {/* ── Bar Chart + Recent Transactions ────────────────────────────── */}
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
