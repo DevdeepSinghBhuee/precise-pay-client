@@ -9,6 +9,8 @@ import {
   X,
   Wallet,
   Target,
+  Sun,
+  Moon,
 } from 'lucide-react'
 import useAuth from '../../hooks/useAuth'
 import { formatCurrency } from '../../utils/formatters'
@@ -36,7 +38,7 @@ const NAV_ITEMS = [
   },
 ]
 
-const Sidebar = ({ isOpen, onClose }) => {
+const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
   const { user, logout } = useAuth()
   const navigate         = useNavigate()
 
@@ -64,14 +66,14 @@ const Sidebar = ({ isOpen, onClose }) => {
           position: 'fixed',
           top: 0, left: 0, bottom: 0,
           width: '260px',
-          backgroundColor: '#ffffff',
-          borderRight: '1px solid #f3f4f6',
+          backgroundColor: 'var(--sidebar-bg)',
+          borderRight: '1px solid var(--border)',
           display: 'flex',
           flexDirection: 'column',
           zIndex: 50,
           transform: isOpen ? 'translateX(0)' : 'translateX(-100%)',
-          transition: 'transform 0.25s ease',
-          boxShadow: '4px 0 24px rgba(0,0,0,0.06)',
+          transition: 'transform 0.25s ease, background 0.3s ease',
+          boxShadow: '4px 0 24px var(--shadow)',
         }}
         className="sidebar-panel"
       >
@@ -94,7 +96,7 @@ const Sidebar = ({ isOpen, onClose }) => {
                 <TrendingUp color="white" size={20} />
               </div>
               <span style={{
-                fontSize: '18px', fontWeight: '800', color: '#111827',
+                fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)',
               }}>
                 Precise-Pay
               </span>
@@ -144,7 +146,7 @@ const Sidebar = ({ isOpen, onClose }) => {
         {/* ── Navigation ───────────────────────────────────────────────── */}
         <nav style={{ flex: 1, padding: '8px 12px', overflowY: 'auto' }}>
           <p style={{
-            fontSize: '11px', fontWeight: '600', color: '#9ca3af',
+            fontSize: '11px', fontWeight: '600', color: 'var(--text-muted)',
             textTransform: 'uppercase', letterSpacing: '0.8px',
             padding: '8px 8px 12px',
           }}>
@@ -182,6 +184,44 @@ const Sidebar = ({ isOpen, onClose }) => {
           padding: '16px',
           borderTop: '1px solid #f3f4f6',
         }}>
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={onToggleDark}
+            style={{
+              width: '100%', display: 'flex', alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '10px 12px', marginBottom: '10px',
+              background: 'none',
+              border: '1px solid var(--border)',
+              borderRadius: '10px', cursor: 'pointer',
+              color: 'var(--text-secondary)',
+              fontSize: '14px', fontWeight: '500',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              {isDark ? <Sun size={16} color="#f59e0b" /> : <Moon size={16} />}
+              {isDark ? 'Light Mode' : 'Dark Mode'}
+            </div>
+            <div style={{
+              width: '36px', height: '20px',
+              borderRadius: '999px',
+              background: isDark ? '#2563eb' : '#d1d5db',
+              position: 'relative',
+              transition: 'background 0.2s ease',
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '2px',
+                left: isDark ? '18px' : '2px',
+                width: '16px', height: '16px',
+                borderRadius: '50%',
+                background: '#ffffff',
+                transition: 'left 0.2s ease',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+              }} />
+            </div>
+          </button>
+
           <div style={{
             display: 'flex', alignItems: 'center',
             gap: '10px', marginBottom: '12px',

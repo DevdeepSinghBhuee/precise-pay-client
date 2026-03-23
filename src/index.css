@@ -1,5 +1,38 @@
 /* src/index.css */
 
+/* ── Theme Variables ──────────────────────────────────────────────────────── */
+:root {
+  --bg-primary:    #ffffff;
+  --bg-secondary:  #f4f6f9;
+  --bg-card:       #ffffff;
+  --bg-hover:      #fafafa;
+  --bg-input:      #ffffff;
+  --border:        #f3f4f6;
+  --border-input:  #d1d5db;
+  --text-primary:  #111827;
+  --text-secondary:#6b7280;
+  --text-muted:    #9ca3af;
+  --sidebar-bg:    #ffffff;
+  --navbar-bg:     #ffffff;
+  --shadow:        rgba(0,0,0,0.04);
+}
+
+[data-theme="dark"] {
+  --bg-primary:    #0f172a;
+  --bg-secondary:  #1e293b;
+  --bg-card:       #1e293b;
+  --bg-hover:      #2d3748;
+  --bg-input:      #2d3748;
+  --border:        #334155;
+  --border-input:  #475569;
+  --text-primary:  #f1f5f9;
+  --text-secondary:#94a3b8;
+  --text-muted:    #64748b;
+  --sidebar-bg:    #1e293b;
+  --navbar-bg:     #1e293b;
+  --shadow:        rgba(0,0,0,0.3);
+}
+
 /* ── Imports must come first ──────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
