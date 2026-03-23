@@ -491,7 +491,7 @@ const Dashboard = () => {
             periodLabel={activePeriodLabel}
           />
         </div>
-      ))
+      )}
 
       {/* ── Bar Chart + Recent Transactions ────────────────────────────── */}
       <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
