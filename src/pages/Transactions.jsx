@@ -222,11 +222,11 @@ const Transactions = () => {
         <div>
           <h2 style={{
             fontSize: '20px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             All Transactions
           </h2>
-          <p style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
             {pagination
               ? `${pagination.total} total transactions`
               : 'Loading...'
@@ -241,8 +241,8 @@ const Transactions = () => {
 
       {/* ── Filters Bar ──────────────────────────────────────────────── */}
       <div style={{
-        background: '#ffffff', borderRadius: '14px',
-        padding: '16px 20px', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', borderRadius: '14px',
+        padding: '16px 20px', border: '1px solid var(--border)',
         display: 'flex', flexDirection: 'column', gap: '12px',
       }}>
 
@@ -257,7 +257,7 @@ const Transactions = () => {
             <Search size={16} style={{
               position: 'absolute', left: '12px',
               top: '50%', transform: 'translateY(-50%)',
-              color: '#9ca3af', pointerEvents: 'none',
+              color: 'var(--text-muted)', pointerEvents: 'none',
             }} />
             <input
               type="text"
@@ -268,8 +268,8 @@ const Transactions = () => {
                 width: '100%', paddingLeft: '38px',
                 paddingRight: '14px', paddingTop: '10px',
                 paddingBottom: '10px',
-                border: '1px solid #e5e7eb', borderRadius: '8px',
-                fontSize: '14px', outline: 'none', color: '#111827',
+                border: '1px solid var(--border-input)', borderRadius: '8px',
+                fontSize: '14px', outline: 'none', color: 'var(--text-primary)',
                 boxSizing: 'border-box',
               }}
             />
@@ -280,7 +280,7 @@ const Transactions = () => {
                   position: 'absolute', right: '10px',
                   top: '50%', transform: 'translateY(-50%)',
                   background: 'none', border: 'none',
-                  cursor: 'pointer', color: '#9ca3af',
+                  cursor: 'pointer', color: 'var(--text-muted)',
                 }}
               >
                 <X size={14} />
@@ -290,7 +290,7 @@ const Transactions = () => {
 
           {/* Type Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Filter size={16} color="#9ca3af" />
+            <Filter size={16} color="var(--text-muted)" />
             <select
               value={filterType}
               onChange={(e) => {
@@ -301,10 +301,10 @@ const Transactions = () => {
                 fetchTransactions({ ...params, type: e.target.value })
               }}
               style={{
-                padding: '10px 14px', border: '1px solid #e5e7eb',
+                padding: '10px 14px', border: '1px solid var(--border-input)',
                 borderRadius: '8px', fontSize: '14px',
-                outline: 'none', color: '#111827',
-                background: '#ffffff', cursor: 'pointer',
+                outline: 'none', color: 'var(--text-primary)',
+                background: 'var(--bg-card)', cursor: 'pointer',
               }}
             >
               <option value="">All Types</option>
@@ -321,13 +321,13 @@ const Transactions = () => {
               padding: '10px 14px',
               border: '1px solid',
               borderColor: showAdvanced || hasAdvancedFilters
-                ? '#2563eb' : '#e5e7eb',
+                ? '#2563eb' : 'var(--border-input)',
               borderRadius: '8px', fontSize: '13px',
               fontWeight: '600',
               color: showAdvanced || hasAdvancedFilters
-                ? '#2563eb' : '#6b7280',
+                ? '#2563eb' : 'var(--text-secondary)',
               background: showAdvanced || hasAdvancedFilters
-                ? '#eff6ff' : '#ffffff',
+                ? '#eff6ff' : 'var(--bg-card)',
               cursor: 'pointer',
             }}
           >
@@ -349,9 +349,9 @@ const Transactions = () => {
             <button
               onClick={clearAllFilters}
               style={{
-                background: 'none', border: '1px solid #e5e7eb',
+                background: 'none', border: '1px solid var(--border-input)',
                 borderRadius: '8px', padding: '10px 14px',
-                fontSize: '13px', color: '#6b7280',
+                fontSize: '13px', color: 'var(--text-secondary)',
                 cursor: 'pointer', display: 'flex',
                 alignItems: 'center', gap: '6px',
               }}
@@ -366,7 +366,7 @@ const Transactions = () => {
           display: 'flex', gap: '8px',
           flexWrap: 'wrap', alignItems: 'center',
         }}>
-          <Calendar size={16} color="#9ca3af" style={{ flexShrink: 0 }} />
+          <Calendar size={16} color="var(--text-muted)" style={{ flexShrink: 0 }} />
           {[
             { value: 'this_month',    label: 'This Month' },
             { value: 'last_month',    label: 'Last Month' },
@@ -382,11 +382,11 @@ const Transactions = () => {
                 fontSize: '12px', fontWeight: '600',
                 cursor: 'pointer', border: '1px solid',
                 borderColor: datePreset === preset.value
-                  ? '#2563eb' : '#e5e7eb',
+                  ? '#2563eb' : 'var(--border-input)',
                 background: datePreset === preset.value
-                  ? '#eff6ff' : '#ffffff',
+                  ? '#eff6ff' : 'var(--bg-card)',
                 color: datePreset === preset.value
-                  ? '#2563eb' : '#6b7280',
+                  ? '#2563eb' : 'var(--text-secondary)',
                 transition: 'all 0.15s ease',
               }}
             >
@@ -394,7 +394,7 @@ const Transactions = () => {
             </button>
           ))}
           {(startDate && endDate && datePreset !== 'custom') && (
-            <span style={{ fontSize: '12px', color: '#9ca3af' }}>
+            <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
               {startDate} → {endDate}
             </span>
           )}
@@ -405,8 +405,8 @@ const Transactions = () => {
           <div style={{
             display: 'flex', gap: '12px',
             alignItems: 'center', flexWrap: 'wrap',
-            padding: '12px 16px', background: '#f9fafb',
-            borderRadius: '10px', border: '1px solid #e5e7eb',
+            padding: '12px 16px', background: 'var(--bg-muted)',
+            borderRadius: '10px', border: '1px solid var(--border-input)',
           }}>
             <div style={{
               display: 'flex', alignItems: 'center', gap: '8px',
@@ -462,7 +462,7 @@ const Transactions = () => {
               }}
               style={{
                 background: 'none', border: 'none',
-                cursor: 'pointer', color: '#9ca3af',
+                cursor: 'pointer', color: 'var(--text-muted)',
               }}
             >
               <X size={16} />
@@ -475,14 +475,14 @@ const Transactions = () => {
           <div style={{
             display: 'flex', gap: '16px',
             alignItems: 'flex-end', flexWrap: 'wrap',
-            padding: '16px', background: '#f9fafb',
-            borderRadius: '10px', border: '1px solid #e5e7eb',
+            padding: '16px', background: 'var(--bg-muted)',
+            borderRadius: '10px', border: '1px solid var(--border-input)',
           }}>
             <div style={{
               display: 'flex', alignItems: 'center',
               gap: '6px', marginBottom: '2px',
             }}>
-              <SlidersHorizontal size={14} color="#6b7280" />
+              <SlidersHorizontal size={14} color="var(--text-secondary)" />
               <span style={{
                 fontSize: '13px', fontWeight: '600', color: '#374151',
               }}>
@@ -555,7 +555,7 @@ const Transactions = () => {
                 }}
                 style={{
                   background: 'none', border: 'none',
-                  cursor: 'pointer', color: '#9ca3af',
+                  cursor: 'pointer', color: 'var(--text-muted)',
                   fontSize: '13px', display: 'flex',
                   alignItems: 'center', gap: '4px',
                 }}
@@ -581,10 +581,10 @@ const Transactions = () => {
         <div style={{
           display: 'flex', alignItems: 'center',
           justifyContent: 'space-between',
-          background: '#ffffff', borderRadius: '12px',
-          padding: '12px 20px', border: '1px solid #f3f4f6',
+          background: 'var(--bg-card)', borderRadius: '12px',
+          padding: '12px 20px', border: '1px solid var(--border)',
         }}>
-          <span style={{ fontSize: '13px', color: '#6b7280' }}>
+          <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>
             Page {currentPage} of {pagination.totalPages}
           </span>
           <div style={{ display: 'flex', gap: '8px' }}>

@@ -43,11 +43,11 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
         gridTemplateColumns: '1fr 1fr 1fr 1fr',
         padding: '16px 24px',
         alignItems: 'center',
-        borderBottom: isLast ? 'none' : '1px solid #f9fafb',
+        borderBottom: isLast ? 'none' : '1px solid var(--border)',
         transition: 'background 0.15s ease',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.background = '#fafafa'
+        e.currentTarget.style.background = 'var(--bg-hover)'
       }}
       onMouseLeave={(e) => {
         e.currentTarget.style.background = 'transparent'
@@ -74,7 +74,7 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
           }}>
             <p style={{
               fontSize: '14px', fontWeight: '600',
-              color: '#111827', margin: 0,
+              color: 'var(--text-primary)', margin: 0,
             }}>
               {t.description}
             </p>
@@ -94,7 +94,7 @@ const TransactionCard = ({ transaction: t, onEdit, onDelete, isLast }) => {
           </div>
           {t.notes && (
             <p style={{
-              fontSize: '12px', color: '#9ca3af',
+              fontSize: '12px', color: 'var(--text-muted)',
               margin: 0, marginTop: '2px',
             }}>
               {t.notes}

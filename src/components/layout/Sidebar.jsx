@@ -81,7 +81,7 @@ const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
         {/* ── Logo ────────────────────────────────────────────────────── */}
         <div style={{
           padding: '24px 20px 20px',
-          borderBottom: '1px solid #f3f4f6',
+          borderBottom: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -168,7 +168,7 @@ const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
                 textDecoration: 'none',
                 fontSize: '14px',
                 fontWeight: isActive ? '600' : '500',
-                color: isActive ? '#2563eb' : '#4b5563',
+                color: isActive ? '#2563eb' : 'var(--text-secondary)',
                 backgroundColor: isActive ? '#eff6ff' : 'transparent',
                 transition: 'all 0.15s ease',
               })}
@@ -182,7 +182,7 @@ const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
         {/* ── Logout ───────────────────────────────────────────────────── */}
         <div style={{
           padding: '16px',
-          borderTop: '1px solid #f3f4f6',
+          borderTop: '1px solid var(--border)',
         }}>
           {/* Dark Mode Toggle */}
           <button
@@ -226,7 +226,7 @@ const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
             display: 'flex', alignItems: 'center',
             gap: '10px', marginBottom: '12px',
             padding: '10px',
-            background: '#f9fafb',
+            background: 'var(--bg-muted)',
             borderRadius: '10px',
           }}>
             <div style={{
@@ -242,14 +242,14 @@ const Sidebar = ({ isOpen, onClose, isDark, onToggleDark }) => {
             <div style={{ overflow: 'hidden' }}>
               <p style={{
                 fontSize: '13px', fontWeight: '600',
-                color: '#111827', margin: 0,
+                color: 'var(--text-primary)', margin: 0,
                 whiteSpace: 'nowrap', overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}>
                 {user?.fullName}
               </p>
               <p style={{
-                fontSize: '11px', color: '#9ca3af', margin: 0,
+                fontSize: '11px', color: 'var(--text-muted)', margin: 0,
                 whiteSpace: 'nowrap', overflow: 'hidden',
                 textOverflow: 'ellipsis',
               }}>

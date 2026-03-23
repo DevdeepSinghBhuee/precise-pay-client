@@ -31,9 +31,9 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
 
   return (
     <div style={{
-      background: '#ffffff', borderRadius: '16px',
-      padding: '20px', border: '1px solid #f3f4f6',
-      boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+      background: 'var(--bg-card)', borderRadius: '16px',
+      padding: '20px', border: '1px solid var(--border)',
+      boxShadow: '0 2px 12px var(--shadow)',
       position: 'relative', overflow: 'hidden',
     }}>
       {/* Color accent bar at top */}
@@ -60,12 +60,12 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
           <div>
             <h3 style={{
               fontSize: '15px', fontWeight: '700',
-              color: '#111827', margin: 0,
+              color: 'var(--text-primary)', margin: 0,
             }}>
               {budget.category}
             </h3>
             <p style={{
-              fontSize: '12px', color: '#9ca3af',
+              fontSize: '12px', color: 'var(--text-muted)',
               margin: 0, marginTop: '2px',
             }}>
               Monthly Budget
@@ -125,14 +125,14 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
       }}>
         <div>
           <p style={{
-            fontSize: '11px', color: '#9ca3af',
+            fontSize: '11px', color: 'var(--text-muted)',
             margin: 0, fontWeight: '500',
           }}>
             Spent
           </p>
           <p style={{
             fontSize: '18px', fontWeight: '700',
-            color: budget.isOverBudget ? '#ef4444' : '#111827',
+            color: budget.isOverBudget ? '#ef4444' : 'var(--text-primary)',
             margin: 0,
           }}>
             {formatCurrency(budget.spent)}
@@ -140,14 +140,14 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
         </div>
         <div style={{ textAlign: 'right' }}>
           <p style={{
-            fontSize: '11px', color: '#9ca3af',
+            fontSize: '11px', color: 'var(--text-muted)',
             margin: 0, fontWeight: '500',
           }}>
             Limit
           </p>
           <p style={{
             fontSize: '18px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             {formatCurrency(budget.monthlyLimit)}
           </p>
@@ -156,7 +156,7 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
 
       {/* Progress Bar */}
       <div style={{
-        height: '8px', background: '#f3f4f6',
+        height: '8px', background: 'var(--border)',
         borderRadius: '999px', overflow: 'hidden',
         marginBottom: '8px',
       }}>
@@ -180,7 +180,7 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
         }}>
           {budget.percentage}% used
         </span>
-        <span style={{ fontSize: '12px', color: '#6b7280' }}>
+        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
           {budget.isOverBudget
             ? `${formatCurrency(budget.spent - budget.monthlyLimit)} over`
             : `${formatCurrency(budget.remaining)} left`
@@ -191,17 +191,17 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
       {/* Action Buttons */}
       <div style={{
         display: 'flex', gap: '8px', marginTop: '16px',
-        paddingTop: '16px', borderTop: '1px solid #f3f4f6',
+        paddingTop: '16px', borderTop: '1px solid var(--border)',
       }}>
         <button
           onClick={() => onEdit(budget)}
           style={{
             flex: 1, display: 'flex', alignItems: 'center',
             justifyContent: 'center', gap: '6px',
-            padding: '8px', background: '#f3f4f6',
+            padding: '8px', background: 'var(--bg-muted)',
             border: 'none', borderRadius: '8px',
             cursor: 'pointer', fontSize: '13px',
-            fontWeight: '600', color: '#6b7280',
+            fontWeight: '600', color: 'var(--text-secondary)',
             transition: 'all 0.15s',
           }}
           onMouseEnter={(e) => {
@@ -209,8 +209,8 @@ const BudgetCard = ({ budget, onEdit, onDelete }) => {
             e.currentTarget.style.color = '#4f46e5'
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f3f4f6'
-            e.currentTarget.style.color = '#6b7280'
+            e.currentTarget.style.background = 'var(--bg-muted)'
+            e.currentTarget.style.color = 'var(--text-secondary)'
           }}
         >
           <Pencil size={14} /> Edit
@@ -275,7 +275,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
       {/* Category */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={{
-          fontSize: '14px', fontWeight: '500', color: '#374151',
+          fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)',
         }}>
           Category
         </label>
@@ -287,9 +287,9 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
           disabled={!!defaultValues}
           style={{
             padding: '10px 14px', border: '1px solid #d1d5db',
-            borderRadius: '8px', fontSize: '14px', color: '#111827',
+            borderRadius: '8px', fontSize: '14px', color: 'var(--text-primary)',
             outline: 'none', boxSizing: 'border-box', width: '100%',
-            background: defaultValues ? '#f9fafb' : '#ffffff',
+            background: defaultValues ? 'var(--bg-muted)' : 'var(--bg-card)',
             cursor: defaultValues ? 'not-allowed' : 'text',
           }}
           onFocus={(e) => {
@@ -304,7 +304,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
           }}
         />
         {defaultValues && (
-          <p style={{ fontSize: '12px', color: '#9ca3af', margin: 0 }}>
+          <p style={{ fontSize: '12px', color: 'var(--text-muted)', margin: 0 }}>
             Category cannot be changed after creation.
           </p>
         )}
@@ -313,7 +313,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
       {/* Monthly Limit */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
         <label style={{
-          fontSize: '14px', fontWeight: '500', color: '#374151',
+          fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)',
         }}>
           Monthly Limit (₹)
         </label>
@@ -326,7 +326,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
           onChange={(e) => setMonthlyLimit(e.target.value)}
           style={{
             padding: '10px 14px', border: '1px solid #d1d5db',
-            borderRadius: '8px', fontSize: '14px', color: '#111827',
+            borderRadius: '8px', fontSize: '14px', color: 'var(--text-primary)',
             outline: 'none', boxSizing: 'border-box', width: '100%',
           }}
           onFocus={(e) => {
@@ -343,7 +343,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
       {/* Color Picker */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <label style={{
-          fontSize: '14px', fontWeight: '500', color: '#374151',
+          fontSize: '14px', fontWeight: '500', color: 'var(--text-secondary)',
         }}>
           Card Color
         </label>
@@ -358,7 +358,7 @@ const BudgetForm = ({ onSubmit, defaultValues, isSubmitting }) => {
                 minWidth: '32px', minHeight: '32px',
                 borderRadius: '50%', background: c,
                 border: color === c
-                  ? '3px solid #111827'
+                  ? '3px solid var(--text-primary)'
                   : '3px solid transparent',
                 cursor: 'pointer', outline: 'none',
                 flexShrink: 0, padding: 0,
@@ -491,11 +491,11 @@ const Budgets = () => {
         <div>
           <h2 style={{
             fontSize: '20px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             Budget Goals
           </h2>
-          <p style={{ fontSize: '13px', color: '#9ca3af', marginTop: '2px' }}>
+          <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px' }}>
             Track your monthly spending limits by category
           </p>
         </div>
@@ -510,8 +510,8 @@ const Budgets = () => {
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
           <div style={{
             flex: 1, minWidth: '140px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '16px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '16px 20px', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: '12px',
           }}>
             <div style={{
@@ -523,14 +523,14 @@ const Budgets = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 On Track
               </p>
               <p style={{
                 fontSize: '22px', fontWeight: '700',
-                color: '#111827', margin: 0,
+                color: 'var(--text-primary)', margin: 0,
               }}>
                 {onTrackCount}
               </p>
@@ -539,8 +539,8 @@ const Budgets = () => {
 
           <div style={{
             flex: 1, minWidth: '140px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '16px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '16px 20px', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: '12px',
           }}>
             <div style={{
@@ -552,14 +552,14 @@ const Budgets = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Warning
               </p>
               <p style={{
                 fontSize: '22px', fontWeight: '700',
-                color: '#111827', margin: 0,
+                color: 'var(--text-primary)', margin: 0,
               }}>
                 {warningCount}
               </p>
@@ -568,8 +568,8 @@ const Budgets = () => {
 
           <div style={{
             flex: 1, minWidth: '140px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '16px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '16px 20px', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: '12px',
           }}>
             <div style={{
@@ -581,7 +581,7 @@ const Budgets = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Over Budget
@@ -597,8 +597,8 @@ const Budgets = () => {
 
           <div style={{
             flex: 1, minWidth: '140px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '16px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '16px 20px', border: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', gap: '12px',
           }}>
             <div style={{
@@ -610,14 +610,14 @@ const Budgets = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Total Budgets
               </p>
               <p style={{
                 fontSize: '22px', fontWeight: '700',
-                color: '#111827', margin: 0,
+                color: 'var(--text-primary)', margin: 0,
               }}>
                 {budgets.length}
               </p>
@@ -635,16 +635,16 @@ const Budgets = () => {
         </div>
       ) : budgets.length === 0 ? (
         <div style={{
-          background: '#ffffff', borderRadius: '16px',
-          padding: '60px', border: '1px solid #f3f4f6',
-          textAlign: 'center', color: '#9ca3af',
+          background: 'var(--bg-card)', borderRadius: '16px',
+          padding: '60px', border: '1px solid var(--border)',
+            textAlign: 'center', color: 'var(--text-muted)',
         }}>
           <TrendingDown size={48} style={{
             margin: '0 auto 16px', opacity: 0.2, display: 'block',
           }} />
           <p style={{
             fontSize: '16px', fontWeight: '600',
-            color: '#374151', margin: '0 0 8px',
+            color: 'var(--text-secondary)', margin: '0 0 8px',
           }}>
             No budgets set yet
           </p>

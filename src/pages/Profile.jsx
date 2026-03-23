@@ -38,28 +38,28 @@ const InfoRow = ({ icon, label, value, badge }) => (
     display: 'flex', alignItems: 'center',
     justifyContent: 'space-between',
     padding: '14px 0',
-    borderBottom: '1px solid #f3f4f6',
+    borderBottom: '1px solid var(--border)',
   }}>
     <div style={{
       display: 'flex', alignItems: 'center', gap: '12px',
     }}>
       <div style={{
         width: '36px', height: '36px', borderRadius: '10px',
-        background: '#f3f4f6', display: 'flex',
+        background: 'var(--bg-muted)', display: 'flex',
         alignItems: 'center', justifyContent: 'center',
-        color: '#6b7280', flexShrink: 0,
+        color: 'var(--text-secondary)', flexShrink: 0,
       }}>
         {icon}
       </div>
       <div>
         <p style={{
-          fontSize: '12px', color: '#9ca3af',
+          fontSize: '12px', color: 'var(--text-muted)',
           margin: 0, fontWeight: '500',
         }}>
           {label}
         </p>
         <p style={{
-          fontSize: '14px', color: '#111827',
+          fontSize: '14px', color: 'var(--text-primary)',
           margin: 0, fontWeight: '600', marginTop: '2px',
         }}>
           {value}
@@ -184,8 +184,8 @@ const Profile = () => {
           {/* Income Stat */}
           <div style={{
             flex: 1, minWidth: '160px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '18px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '18px 20px', border: '1px solid var(--border)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             display: 'flex', alignItems: 'center', gap: '14px',
           }}>
@@ -199,7 +199,7 @@ const Profile = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Total Income
@@ -216,8 +216,8 @@ const Profile = () => {
           {/* Expense Stat */}
           <div style={{
             flex: 1, minWidth: '160px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '18px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '18px 20px', border: '1px solid var(--border)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             display: 'flex', alignItems: 'center', gap: '14px',
           }}>
@@ -231,7 +231,7 @@ const Profile = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Total Expenses
@@ -248,8 +248,8 @@ const Profile = () => {
           {/* Net Savings Stat */}
           <div style={{
             flex: 1, minWidth: '160px',
-            background: '#ffffff', borderRadius: '14px',
-            padding: '18px 20px', border: '1px solid #f3f4f6',
+            background: 'var(--bg-card)', borderRadius: '14px',
+            padding: '18px 20px', border: '1px solid var(--border)',
             boxShadow: '0 2px 8px rgba(0,0,0,0.04)',
             display: 'flex', alignItems: 'center', gap: '14px',
           }}>
@@ -263,7 +263,7 @@ const Profile = () => {
             </div>
             <div>
               <p style={{
-                fontSize: '12px', color: '#9ca3af',
+                fontSize: '12px', color: 'var(--text-muted)',
                 margin: 0, fontWeight: '500',
               }}>
                 Net Savings
@@ -283,19 +283,19 @@ const Profile = () => {
 
       {/* ── Account Information ───────────────────────────────────────── */}
       <div style={{
-        background: '#ffffff', borderRadius: '16px',
-        padding: '24px', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', borderRadius: '16px',
+        padding: '24px', border: '1px solid var(--border)',
         boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
       }}>
         <div style={{ marginBottom: '4px' }}>
           <h3 style={{
             fontSize: '16px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             Account Information
           </h3>
           <p style={{
-            fontSize: '13px', color: '#9ca3af', marginTop: '4px',
+            fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px',
           }}>
             Your personal account details
           </p>
@@ -348,19 +348,19 @@ const Profile = () => {
 
       {/* ── Change Password ───────────────────────────────────────────── */}
       <div style={{
-        background: '#ffffff', borderRadius: '16px',
-        padding: '24px', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', borderRadius: '16px',
+        padding: '24px', border: '1px solid var(--border)',
         boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
       }}>
         <div style={{ marginBottom: '20px' }}>
           <h3 style={{
             fontSize: '16px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             Change Password
           </h3>
           <p style={{
-            fontSize: '13px', color: '#9ca3af', marginTop: '4px',
+            fontSize: '13px', color: 'var(--text-muted)', marginTop: '4px',
           }}>
             Update your password to keep your account secure
           </p>
@@ -383,7 +383,7 @@ const Profile = () => {
                 onClick={() => setShowCurrent(!showCurrent)}
                 style={{
                   background: 'none', border: 'none',
-                  cursor: 'pointer', color: '#9ca3af',
+                  cursor: 'pointer', color: 'var(--text-muted)',
                   display: 'flex', alignItems: 'center',
                 }}
               >
@@ -405,7 +405,7 @@ const Profile = () => {
                 onClick={() => setShowNew(!showNew)}
                 style={{
                   background: 'none', border: 'none',
-                  cursor: 'pointer', color: '#9ca3af',
+                  cursor: 'pointer', color: 'var(--text-muted)',
                   display: 'flex', alignItems: 'center',
                 }}
               >
@@ -427,7 +427,7 @@ const Profile = () => {
                 onClick={() => setShowConfirm(!showConfirm)}
                 style={{
                   background: 'none', border: 'none',
-                  cursor: 'pointer', color: '#9ca3af',
+                  cursor: 'pointer', color: 'var(--text-muted)',
                   display: 'flex', alignItems: 'center',
                 }}
               >

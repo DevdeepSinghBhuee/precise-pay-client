@@ -67,16 +67,16 @@ const DATE_PRESETS = [
 // ── Summary Card ───────────────────────────────────────────────────────────
 const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
   <div style={{
-    background: '#ffffff', borderRadius: '16px',
-    padding: '20px', border: '1px solid #f3f4f6',
-    boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+    background: 'var(--bg-card)', borderRadius: '16px',
+    padding: '20px', border: '1px solid var(--border)',
+    boxShadow: '0 2px 12px var(--shadow)',
     flex: 1, minWidth: '200px',
   }}>
     <div style={{
       display: 'flex', alignItems: 'center',
       justifyContent: 'space-between', marginBottom: '12px',
     }}>
-      <span style={{ fontSize: '13px', fontWeight: '500', color: '#6b7280' }}>
+      <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-secondary)' }}>
         {title}
       </span>
       <div style={{
@@ -87,7 +87,7 @@ const SummaryCard = ({ title, amount, icon, bgColor, trend }) => (
         {icon}
       </div>
     </div>
-    <div style={{ fontSize: '24px', fontWeight: '700', color: '#111827' }}>
+    <div style={{ fontSize: '24px', fontWeight: '700', color: 'var(--text-primary)' }}>
       {formatCurrency(amount || 0)}
     </div>
     {trend && (
@@ -115,13 +115,13 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: '#ffffff', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', border: '1px solid var(--border)',
         borderRadius: '10px', padding: '12px 16px',
         boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
       }}>
         <p style={{
           fontSize: '13px', fontWeight: '600',
-          color: '#111827', marginBottom: '8px',
+          color: 'var(--text-primary)', marginBottom: '8px',
         }}>
           {label}
         </p>
@@ -144,13 +144,13 @@ const CustomPieTooltip = ({ active, payload }) => {
     const item = payload[0]
     return (
       <div style={{
-        background: '#ffffff', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', border: '1px solid var(--border)',
         borderRadius: '10px', padding: '10px 14px',
         boxShadow: '0 4px 16px rgba(0,0,0,0.08)',
       }}>
         <p style={{
           fontSize: '13px', fontWeight: '700',
-          color: '#111827', margin: '0 0 4px',
+          color: 'var(--text-primary)', margin: '0 0 4px',
         }}>
           {item.name}
         </p>
@@ -158,7 +158,7 @@ const CustomPieTooltip = ({ active, payload }) => {
           {formatCurrency(item.value)}
         </p>
         <p style={{
-          fontSize: '12px', color: '#9ca3af', margin: '2px 0 0',
+          fontSize: '12px', color: 'var(--text-muted)', margin: '2px 0 0',
         }}>
           {item.payload.percentage}% of expenses
         </p>
@@ -310,8 +310,8 @@ const Dashboard = () => {
 
       {/* ── Date Filter Bar ────────────────────────────────────────────── */}
       <div style={{
-        background: '#ffffff', borderRadius: '14px',
-        padding: '14px 20px', border: '1px solid #f3f4f6',
+        background: 'var(--bg-card)', borderRadius: '14px',
+        padding: '14px 20px', border: '1px solid var(--border)',
         display: 'flex', alignItems: 'center',
         gap: '10px', flexWrap: 'wrap',
       }}>
@@ -319,7 +319,7 @@ const Dashboard = () => {
           display: 'flex', alignItems: 'center',
           gap: '8px', marginRight: '4px',
         }}>
-          <Calendar size={16} color="#9ca3af" />
+          <Calendar size={16} color="var(--text-muted)" />
           <span style={{
             fontSize: '13px', fontWeight: '600', color: '#6b7280',
           }}>
@@ -389,20 +389,20 @@ const Dashboard = () => {
 
         {/* Bar Chart */}
         <div style={{
-          background: '#ffffff', borderRadius: '16px',
-          padding: '24px', border: '1px solid #f3f4f6',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          background: 'var(--bg-card)', borderRadius: '16px',
+          padding: '24px', border: '1px solid var(--border)',
+          boxShadow: '0 2px 12px var(--shadow)',
           flex: 2, minWidth: '300px',
         }}>
           <div style={{ marginBottom: '24px' }}>
             <h3 style={{
               fontSize: '16px', fontWeight: '700',
-              color: '#111827', margin: 0,
+              color: 'var(--text-primary)', margin: 0,
             }}>
               Income vs Expenses
             </h3>
             <p style={{
-              fontSize: '13px', color: '#9ca3af', marginTop: '2px',
+              fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px',
             }}>
               {activePeriodLabel} — monthly breakdown
             </p>
@@ -416,7 +416,7 @@ const Dashboard = () => {
             </div>
           ) : chartData.length === 0 ? (
             <div style={{
-              textAlign: 'center', padding: '40px', color: '#9ca3af',
+              textAlign: 'center', padding: '40px', color: 'var(--text-muted)',
             }}>
               <ArrowLeftRight size={40} style={{
                 margin: '0 auto 12px', opacity: 0.3, display: 'block',
@@ -430,11 +430,11 @@ const Dashboard = () => {
               <BarChart data={chartData}
                         margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3"
-                               stroke="#f3f4f6" vertical={false} />
+                               stroke="var(--border)" vertical={false} />
                 <XAxis dataKey="month"
-                       tick={{ fontSize: 12, fill: '#9ca3af' }}
+                       tick={{ fontSize: 12, fill: 'var(--text-muted)' }}
                        axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 12, fill: '#9ca3af' }}
+                <YAxis tick={{ fontSize: 12, fill: 'var(--text-muted)' }}
                        axisLine={false} tickLine={false}
                        tickFormatter={(v) =>
                          `₹${(v / 1000).toFixed(0)}k`} />
@@ -453,9 +453,9 @@ const Dashboard = () => {
 
         {/* Recent Transactions */}
         <div style={{
-          background: '#ffffff', borderRadius: '16px',
-          padding: '24px', border: '1px solid #f3f4f6',
-          boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+          background: 'var(--bg-card)', borderRadius: '16px',
+          padding: '24px', border: '1px solid var(--border)',
+          boxShadow: '0 2px 12px var(--shadow)',
           flex: 1, minWidth: '280px',
         }}>
           <div style={{
@@ -465,12 +465,12 @@ const Dashboard = () => {
             <div>
               <h3 style={{
                 fontSize: '16px', fontWeight: '700',
-                color: '#111827', margin: 0,
+                color: 'var(--text-primary)', margin: 0,
               }}>
                 Recent Transactions
               </h3>
               <p style={{
-                fontSize: '13px', color: '#9ca3af', marginTop: '2px',
+                fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px',
               }}>
                 {activePeriodLabel}
               </p>
@@ -509,7 +509,7 @@ const Dashboard = () => {
                 <div key={t.id} style={{
                   display: 'flex', alignItems: 'center',
                   justifyContent: 'space-between',
-                  padding: '12px', background: '#f9fafb',
+                  padding: '12px', background: 'var(--bg-muted)',
                   borderRadius: '10px',
                 }}>
                   <div style={{
@@ -531,14 +531,14 @@ const Dashboard = () => {
                     <div>
                       <p style={{
                         fontSize: '13px', fontWeight: '600',
-                        color: '#111827', margin: 0,
+                        color: 'var(--text-primary)', margin: 0,
                         maxWidth: '140px', whiteSpace: 'nowrap',
                         overflow: 'hidden', textOverflow: 'ellipsis',
                       }}>
                         {t.description}
                       </p>
                       <p style={{
-                        fontSize: '11px', color: '#9ca3af',
+                        fontSize: '11px', color: 'var(--text-muted)',
                         margin: 0, marginTop: '2px',
                       }}>
                         {formatDate(t.date)}
@@ -561,19 +561,19 @@ const Dashboard = () => {
 
       {/* ── Expense Breakdown by Category ──────────────────────────────── */}
       <div style={{
-        background: '#ffffff', borderRadius: '16px',
-        padding: '24px', border: '1px solid #f3f4f6',
-        boxShadow: '0 2px 12px rgba(0,0,0,0.04)',
+        background: 'var(--bg-card)', borderRadius: '16px',
+        padding: '24px', border: '1px solid var(--border)',
+        boxShadow: '0 2px 12px var(--shadow)',
       }}>
         <div style={{ marginBottom: '24px' }}>
           <h3 style={{
             fontSize: '16px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             Expense Breakdown
           </h3>
           <p style={{
-            fontSize: '13px', color: '#9ca3af', marginTop: '2px',
+            fontSize: '13px', color: 'var(--text-muted)', marginTop: '2px',
           }}>
             {activePeriodLabel} — spending by category
           </p>
@@ -637,7 +637,7 @@ const Dashboard = () => {
                 justifyContent: 'space-between',
               }}>
                 <span style={{
-                  fontSize: '13px', fontWeight: '600', color: '#6b7280',
+                  fontSize: '13px', fontWeight: '600', color: 'var(--text-secondary)',
                 }}>
                   Total Expenses — {activePeriodLabel}
                 </span>
@@ -669,7 +669,7 @@ const Dashboard = () => {
                       }}>
                         <span style={{
                           fontSize: '13px', fontWeight: '600',
-                          color: '#111827',
+                          color: 'var(--text-primary)',
                         }}>
                           {item.name}
                         </span>
@@ -681,7 +681,7 @@ const Dashboard = () => {
                         </span>
                       </div>
                       <div style={{
-                        height: '6px', background: '#f3f4f6',
+                        height: '6px', background: 'var(--border)',
                         borderRadius: '999px', overflow: 'hidden',
                       }}>
                         <div style={{
@@ -695,7 +695,7 @@ const Dashboard = () => {
                     </div>
                     <span style={{
                       fontSize: '12px', fontWeight: '700',
-                      color: '#9ca3af', minWidth: '36px',
+                      color: 'var(--text-muted)', minWidth: '36px',
                       textAlign: 'right',
                     }}>
                       {item.percentage}%

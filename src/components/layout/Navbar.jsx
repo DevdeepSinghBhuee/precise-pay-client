@@ -50,8 +50,8 @@ const Navbar = ({ onMenuClick }) => {
   return (
     <header style={{
       height: '64px',
-      backgroundColor: '#ffffff',
-      borderBottom: '1px solid #f3f4f6',
+      backgroundColor: 'var(--navbar-bg)',
+      borderBottom: '1px solid var(--border)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -59,7 +59,7 @@ const Navbar = ({ onMenuClick }) => {
       position: 'sticky',
       top: 0,
       zIndex: 30,
-      boxShadow: '0 1px 8px rgba(0,0,0,0.04)',
+      boxShadow: '0 1px 8px var(--shadow)',
     }}>
 
       {/* Left */}
@@ -79,12 +79,12 @@ const Navbar = ({ onMenuClick }) => {
         <div>
           <h1 style={{
             fontSize: '18px', fontWeight: '700',
-            color: '#111827', margin: 0,
+            color: 'var(--text-primary)', margin: 0,
           }}>
             {title}
           </h1>
           <p style={{
-            fontSize: '12px', color: '#9ca3af',
+            fontSize: '12px', color: 'var(--text-muted)',
             margin: 0, marginTop: '1px',
           }}>
             {new Date().toLocaleDateString('en-IN', {
@@ -130,9 +130,9 @@ const Navbar = ({ onMenuClick }) => {
           {open && (
             <div style={{
               position: 'absolute', top: '48px', right: 0,
-              width: '360px', background: '#ffffff',
-              borderRadius: '16px', border: '1px solid #f3f4f6',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.12)',
+              width: '360px', background: 'var(--bg-card)',
+              borderRadius: '16px', border: '1px solid var(--border)',
+              boxShadow: '0 8px 32px var(--shadow-md)',
               zIndex: 100, overflow: 'hidden',
             }}>
 
@@ -141,17 +141,17 @@ const Navbar = ({ onMenuClick }) => {
                 display: 'flex', alignItems: 'center',
                 justifyContent: 'space-between',
                 padding: '16px 20px',
-                borderBottom: '1px solid #f3f4f6',
+                borderBottom: '1px solid var(--border)',
               }}>
                 <div>
                   <h3 style={{
                     fontSize: '15px', fontWeight: '700',
-                    color: '#111827', margin: 0,
+                    color: 'var(--text-primary)', margin: 0,
                   }}>
                     Notifications
                   </h3>
                   <p style={{
-                    fontSize: '12px', color: '#9ca3af',
+                    fontSize: '12px', color: 'var(--text-muted)',
                     margin: 0, marginTop: '2px',
                   }}>
                     {notifications.length} total
@@ -178,14 +178,14 @@ const Navbar = ({ onMenuClick }) => {
                 {loading ? (
                   <div style={{
                     padding: '40px', textAlign: 'center',
-                    color: '#9ca3af', fontSize: '14px',
+                    color: 'var(--text-muted)', fontSize: '14px',
                   }}>
                     Loading...
                   </div>
                 ) : notifications.length === 0 ? (
                   <div style={{
                     padding: '40px', textAlign: 'center',
-                    color: '#9ca3af',
+                    color: 'var(--text-muted)',
                   }}>
                     <Bell size={32} style={{
                       margin: '0 auto 12px', opacity: 0.2,
@@ -202,8 +202,8 @@ const Navbar = ({ onMenuClick }) => {
                       <div key={n.id} style={{
                         display: 'flex', gap: '12px',
                         padding: '14px 20px',
-                        borderBottom: '1px solid #f9fafb',
-                        background: n.read ? '#ffffff' : '#fafafa',
+                        borderBottom: '1px solid var(--border)',
+                        background: n.read ? 'var(--bg-card)' : 'var(--bg-hover)',
                         transition: 'background 0.15s',
                       }}>
                         {/* Dot */}
@@ -223,19 +223,19 @@ const Navbar = ({ onMenuClick }) => {
                           }}>
                             <p style={{
                               fontSize: '13px', fontWeight: '600',
-                              color: '#111827', margin: 0,
+                              color: 'var(--text-primary)', margin: 0,
                             }}>
                               {n.title}
                             </p>
                             <span style={{
-                              fontSize: '11px', color: '#9ca3af',
+                              fontSize: '11px', color: 'var(--text-muted)',
                               flexShrink: 0, marginLeft: '8px',
                             }}>
                               {n.time}
                             </span>
                           </div>
                           <p style={{
-                            fontSize: '12px', color: '#6b7280',
+                            fontSize: '12px', color: 'var(--text-secondary)',
                             margin: 0, lineHeight: '1.5',
                           }}>
                             {n.message}
@@ -250,7 +250,7 @@ const Navbar = ({ onMenuClick }) => {
               {/* Footer */}
               <div style={{
                 padding: '12px 20px',
-                borderTop: '1px solid #f3f4f6',
+                borderTop: '1px solid var(--border)',
                 textAlign: 'center',
               }}>
                 <button

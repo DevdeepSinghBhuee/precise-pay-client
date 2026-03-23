@@ -2,35 +2,39 @@
 
 /* ── Theme Variables ──────────────────────────────────────────────────────── */
 :root {
-  --bg-primary:    #ffffff;
-  --bg-secondary:  #f4f6f9;
-  --bg-card:       #ffffff;
-  --bg-hover:      #fafafa;
-  --bg-input:      #ffffff;
-  --border:        #f3f4f6;
-  --border-input:  #d1d5db;
-  --text-primary:  #111827;
-  --text-secondary:#6b7280;
-  --text-muted:    #9ca3af;
-  --sidebar-bg:    #ffffff;
-  --navbar-bg:     #ffffff;
-  --shadow:        rgba(0,0,0,0.04);
+  --bg-primary:     #ffffff;
+  --bg-secondary:   #f4f6f9;
+  --bg-card:        #ffffff;
+  --bg-hover:       #f9fafb;
+  --bg-input:       #ffffff;
+  --bg-muted:       #f9fafb;
+  --border:         #f3f4f6;
+  --border-input:   #d1d5db;
+  --text-primary:   #111827;
+  --text-secondary: #4b5563;
+  --text-muted:     #9ca3af;
+  --sidebar-bg:     #ffffff;
+  --navbar-bg:      #ffffff;
+  --shadow:         rgba(0,0,0,0.04);
+  --shadow-md:      rgba(0,0,0,0.08);
 }
 
 [data-theme="dark"] {
-  --bg-primary:    #0f172a;
-  --bg-secondary:  #1e293b;
-  --bg-card:       #1e293b;
-  --bg-hover:      #2d3748;
-  --bg-input:      #2d3748;
-  --border:        #334155;
-  --border-input:  #475569;
-  --text-primary:  #f1f5f9;
-  --text-secondary:#94a3b8;
-  --text-muted:    #64748b;
-  --sidebar-bg:    #1e293b;
-  --navbar-bg:     #1e293b;
-  --shadow:        rgba(0,0,0,0.3);
+  --bg-primary:     #0f172a;
+  --bg-secondary:   #0f172a;
+  --bg-card:        #1e293b;
+  --bg-hover:       #293548;
+  --bg-input:       #293548;
+  --bg-muted:       #1e293b;
+  --border:         #2d3f55;
+  --border-input:   #3d5068;
+  --text-primary:   #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted:     #64748b;
+  --sidebar-bg:     #1e293b;
+  --navbar-bg:      #1e293b;
+  --shadow:         rgba(0,0,0,0.2);
+  --shadow-md:      rgba(0,0,0,0.35);
 }
 
 /* ── Imports must come first ──────────────────────────────────────────── */
@@ -154,4 +158,37 @@ button {
 @keyframes spin {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
+}
+
+[data-theme="dark"] body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-input) !important;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 6px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--border-input);
+  border-radius: 999px;
 }
